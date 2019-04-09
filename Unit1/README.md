@@ -357,6 +357,186 @@ Leonhard Euler's Model:
 
 #### Graph Class ####
 
+```python
+class Node(object):
+	def __init__(self, name):
+		'''	Assumes name is a string '''
+		self.name = name
+	def getName(self):
+		return self.name
+	def __str__(self):
+		return self.name
+
+class Edge(object):
+	def __init__(self, src, dest):
+		'''	Assumes src and dest are nodes '''
+		self.src = src
+		self.dest = dest 
+	def getSource(self):
+		return self.src
+	def getDestination(self):
+		return self.dest 
+	def __str__(self):
+		return self.src.getName() + ' -> ' + self.dest.getName()
+```
+
+**Common Representations of Digraphs**:
+* Adjacency matrix
+	* rows: source nodes
+	* columns: destination nodes
+	* cell[s,d] = 1 if there is an edge from s to do, otherwise 0
+
+* Adjacency list
+	* associate with each node a list of destination nodes
+
+```python
+class Digraph(object):
+	'''	edges is a dict mapping each node to a list of its children '''
+	def __init__(self):
+		self.edges = {}
+	def addNode(self, node):
+		if node in self.edges:
+			raise ValueError('Duplicate node')
+		else:
+			self.edges[node] = []
+	def addEdge(self, edge):
+		src = edge.getSource()
+		dest = edge.getDestination()
+		if not (src in self.edges and dest in self.edges):
+			raise ValueError('Node not in graph')
+		self.edges[src].append(dest)
+	def childrenOf(self, node):
+		return self.edges[node]
+	def hasNode(self, node):
+		return node in self.edges
+	def getNode(self, name):
+		for n in self.edges:
+			if n.getName() == name:
+				return n 
+		raise NameError(name)
+	def __str__(self):
+		result = ''
+		for src in self.edges:
+			for dest in self.edges[src]:
+				result = result + src.getName() + ' -> ' + dest.getName() + '\n'
+		return result[:-1] #omit final newline
+
+class Graph(Digraph):
+	def addEdge(self, edge):
+		Digraph.addEdge(self, edge)
+		rev = Edge(edge.getDestination(), edge.getSource())
+		Digraph.addEdge(self, rev)
+```
+
+**Why is Graph a subclass of digraph?**  
+_If client code works correctly using an instance of supertype, it should also work correctly when an instance of the subtype is substituted for the instance of the supertype_
+
+**A classic graph optimization problem**  
+```python
+def buildCityGraph():
+	g = Digraph()
+	for name in ('Boston', 'Providence', 'New York'):
+		g.addNode(Node(name))
+	g.addEdge(Edge(g.getNode('Boston'), g.getNode('New York'))) # etc
+```
+
+##### Exercise 2 #####
+
+```python
+nodes = []
+nodes.append(Node("ABC")) # nodes[0]
+nodes.append(Node("ACB")) # nodes[1]
+nodes.append(Node("BAC")) # nodes[2]
+nodes.append(Node("BCA")) # nodes[3]
+nodes.append(Node("CAB")) # nodes[4]
+nodes.append(Node("CBA")) # nodes[5]
+
+g = Graph()
+for n in nodes:
+    g.addNode(n)
+
+''' bug - but potential
+def permutations(node_name):
+	result = []
+	for i in range(2):
+		node = list(node_name)
+		if i == 0:
+			node[0], node[1] = node[1], node[0]
+		else:
+			node[1], node[2] = node[2], node[1]
+		result.append(''.join(node))
+	return result
+
+for node in nodes:
+	perm = permutations(node.getName())
+	for each in perm:
+		try:
+			print(Edge(g.getNode(each), node))
+			#g.addEdge(Edge(g.getNode(each), node))
+		except NameError:
+			continue'''
+g.addEdge(Edge(nodes[0], nodes[1]))
+g.addEdge(Edge(nodes[0], nodes[2]))
+g.addEdge(Edge(nodes[1], nodes[4]))
+g.addEdge(Edge(nodes[2], nodes[3]))
+g.addEdge(Edge(nodes[3], nodes[5]))
+g.addEdge(Edge(nodes[4], nodes[5]))
+```
+
 #### Finding the Shortest Path ####
 
-#### Reachable Nodes ####
+**Depth-first Search (DFS)**:  
+* similar to left-first depth-first method of enumerating a search tree
+* main difference is that graph might have cycles, so we must keep track of what nodes we have visited
+
+```python
+def DFS(graph, start, end, path, shortest):
+	path = path + [start]
+	if start == end:
+		return path
+	for node in graph.childrenOf(start):
+		if node not in path: #avoid cycles
+		if shortest == None:
+			newPath = DFS(graph, node, end, path, shortest, toPrint)
+			if newPath != None:
+				shortest = newPath
+	return shortest
+
+def shortestPath(graph, start, end):
+	return DFS(graph, start, end, [], None)
+```
+
+**Breadth-first Search (BFS)**:  
+```python
+def BFS(graph, start, end, toPrint = False):
+	initPath = [start]
+	pathQueue = [initPath]
+	if toPrint:
+		print('Current BFS path: ', printPath(pathQueue))
+	while len(pathQueue) != 0:
+		tmpPath = pathQueue.pop(0) # get and remove oldest element in pathQueue
+		print('Current BFS path: ', printPath(tmpPath))
+		lastNode = tmpPath[-1]
+		if lastNode = end:
+			return tmpPath
+		for nextNode in graph.childrenOf(lastNode):
+			newPath = tmpPath + [nextNode]
+			pathQueue.append(newPath)
+	return None
+```
+
+##### Exercise 3 #####
+
+1. For questions 1 and 2, consider our previous problem (permutations of 3 students in a line).
+When represented as a tree, each node will have how many children?  
+**Answer**: 
+
+2. Given two permutations, what is the maximum number of swaps it will take to reach one from the other?  
+**Answer**: 3
+
+3. For questions 3 and 4, consider the general case of our previous problem (permutations of n students in a line). Give your answer in terms of n.
+When represented as a tree, each node will have how many children?  
+**Answer**: n-1
+
+4. Given two permutations, what is the maximum number of swaps it will take to reach one from the other?  
+**Answer**: n * (n - 1) / 2
