@@ -334,6 +334,27 @@ Does this problem have optimal substructure and overlapping subproblems?
 
 #### Graphs ####
 
+Model road system using a digraph:
+* nodes: points where roads end or meet
+* edges: connetions between points
+	* each edge has a weight indicating time it will take to get from source node to destination node for that edge
+
+First reported use of graph theory:
+* Bridges of Konigsberg (1735)
+* Possible to take a walk that traverses each pf the 7 bridges exactly once?
+Leonhard Euler's Model:
+* each island a node
+* each bridge an undirected edge
+* is there a path that contains each edge exactly once? No!
+
+##### Exercise 1 #####
+
+1. A school's course catalog?    
+**Answer**: B) Each vertex is a class, while a directional edge indicates that one class must come before another.
+
+2. Students in a line?  
+**Answer**: A) Vertices represent permutations of the students in line. Edges connect two permutations if one can be made into the other by swapping two adjacent students.
+
 #### Graph Class ####
 
 #### Finding the Shortest Path ####
