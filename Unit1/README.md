@@ -540,3 +540,77 @@ When represented as a tree, each node will have how many children?
 
 4. Given two permutations, what is the maximum number of swaps it will take to reach one from the other?  
 **Answer**: n * (n - 1) / 2
+
+##### Exercise 4 #####
+
+1. Source: 0 Destination: 4
+**Answer**: 014
+
+2. Source: 4 Destination: 1
+**Answer**: 41
+
+3. Source: 1 Destination: 1
+**Answer**: 1
+
+4. Source: 2 Destination: 4
+**Answer**: 2014
+
+5. Source: 2 Destination: 3
+**Answer**: 201453
+
+6. Source: 3 Destination: 1
+**Answer**: 3201
+
+##### Exercise 5 #####
+
+1. How many edges are in **KN**?
+**Answer**: `n * (n-1)/2`
+
+2. Consider the new version of DFS. This traverses paths until all non-circular paths from the source to the destination have been found, and returns the shortest one.
+Let A be the source node, and B be the destination in KN. How many paths of length 2 exist from A to B?
+**Answer**: `n-2`
+
+3. How many paths of length 3 exist from A to B?
+**Answer**: `(n-3) * (n-2)`
+
+4. Continuing the logic used above, calculate the number of paths of length  from A to B, where , and write this number as a ratio of factorials.
+**Answer**: `fact(n-m+1) / fact(n-m-1)`
+
+5. **Answer**: `fact(n-2)`
+
+##### Exercise 6 #####
+
+1. What is the asymptotic worst-case runtime of a Breadth First Search on KN? For simplicity, write O(n) as just n, O(n^2) as n^2, etc.
+**Answer**: n
+
+2. BFS will always run faster than DFS.
+**Answer**: False
+
+3. If a BFS and DFS prioritize the same nodes (e.g., both always choose to explore the lower numbered node first), BFS will always run at least as fast as DFS when run on two nodes in KN.
+**Answer**: True
+
+4. If a BFS and Shortest Path DFS prioritize the same nodes (e.g., both always choose to explore the lower numbered node first), BFS will always run at least as fast as Shortest Path DFS when run on two nodes in any connected unweighted graph.
+**Answer**: True
+
+5. Regardless of node priority, BFS will always run at least as fast as Shortest Path DFS on two nodes in any connected unweighted graph.
+**Answer**: True
+
+##### Exercise 7 #####
+
+1. Consider once again our permutations of students in a line. Recall the nodes in the graph represent permutations, and that the edges represent swaps of adjacent students. We want to design a weighted graph, weighting edges higher for moves that are harder to make. Which of these could be easily implemented by simply assigning weights to the edges already in the graph?
+**Answer**: A) A large student who is difficult to move around in line. B) A sticky spot on the floor which is difficult to move onto and off of.
+
+2. Write a WeightedEdge class that extends Edge. Its constructor requires a weight parameter, as well as the parameters from Edge. You should additionally include a getWeight method. The string value of a WeightedEdge from node A to B with a weight of 3 should be "A->B (3)".
+**Answer**: 
+```python
+class WeightedEdge(Edge):
+    def __init__(self, src, dest, weight):
+        Edge.__init__(self, src, dest)
+        self.weight = weight
+
+    def getWeight(self):
+        return self.weight
+
+    def __str__(self):
+    	return '{}->{} ({})'.format(self.src.getName(), self.dest.getName(), self.weight)
+```
