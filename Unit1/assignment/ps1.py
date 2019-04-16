@@ -9,96 +9,129 @@ import time
 #================================
 
 def load_cows(filename):
-    """
-    Read the contents of the given file.  Assumes the file contents contain
-    data in the form of comma-separated cow name, weight pairs, and return a
-    dictionary containing cow names as keys and corresponding weights as values.
+	"""
+	Read the contents of the given file.  Assumes the file contents contain
+	data in the form of comma-separated cow name, weight pairs, and return a
+	dictionary containing cow names as keys and corresponding weights as values.
 
-    Parameters:
-    filename - the name of the data file as a string
+	Parameters:
+	filename - the name of the data file as a string
 
-    Returns:
-    a dictionary of cow name (string), weight (int) pairs
-    """
+	Returns:
+	a dictionary of cow name (string), weight (int) pairs
+	"""
 
-    cow_dict = dict()
+	cow_dict = dict()
 
-    f = open(filename, 'r')
-    
-    for line in f:
-        line_data = line.split(',')
-        cow_dict[line_data[0]] = int(line_data[1])
-    return cow_dict
+	f = open(filename, 'r')
+	
+	for line in f:
+		line_data = line.split(',')
+		cow_dict[line_data[0]] = int(line_data[1])
+	return cow_dict
 
 
 # Problem 1
-def greedy_cow_transport(cows,limit=10):
-    """
-    Uses a greedy heuristic to determine an allocation of cows that attempts to
-    minimize the number of spaceship trips needed to transport all the cows. The
-    returned allocation of cows may or may not be optimal.
-    The greedy heuristic should follow the following method:
+def greedy_cow_transport(cows,limit = 10):
+	"""
+	Uses a greedy heuristic to determine an allocation of cows that attempts to
+	minimize the number of spaceship trips needed to transport all the cows. The
+	returned allocation of cows may or may not be optimal.
+	The greedy heuristic should follow the following method:
 
-    1. As long as the current trip can fit another cow, add the largest cow that will fit
-        to the trip
-    2. Once the trip is full, begin a new trip to transport the remaining cows
+	1. As long as the current trip can fit another cow, add the largest cow that will fit
+		to the trip
+	2. Once the trip is full, begin a new trip to transport the remaining cows
 
-    Does not mutate the given dictionary of cows.
+	Does not mutate the given dictionary of cows.
 
-    Parameters:
-    cows - a dictionary of name (string), weight (int) pairs
-    limit - weight limit of the spaceship (an int)
-    
-    Returns:
-    A list of lists, with each inner list containing the names of cows
-    transported on a particular trip and the overall list containing all the
-    trips
-    """
-    # TODO: Your code here
-    pass
+	Parameters:
+	cows - a dictionary of name (string), weight (int) pairs
+	limit - weight limit of the spaceship (an int)
+	
+	Returns:
+	A list of lists, with each inner list containing the names of cows
+	transported on a particular trip and the overall list containing all the
+	trips
+	"""
+	def eval_list(my_list, limit):
+		total_weight = 0
+		result = []
+	
+		for item in my_list:
+			if total_weight + item[1] <= limit:
+				result.append(item[0])
+				total_weight += item[1]
+		print('total weight: ', total_weight)
+		return result
+
+	final_result = []
+	# convert dict to list:
+	values = []
+	no_dup = []
+	# remove duplicates
+	for key, value in cows.items():
+		if value not in values:
+			values.append(value)
+			no_dup.append((key, value))
+	# delete values list cuz not needed
+	del values
+	# sort list by reverse order
+	my_list = sorted(no_dup, key=lambda x: x[1], reverse = True)
+
+	print('my list: ', my_list)
+
+
+	for i in range(0, int(len(my_list)/2)):
+		# print('spliced list: ', my_list[i:])
+		evaluated_list = eval_list(my_list[i:], limit)
+		if evaluated_list != []:
+			final_result.append(evaluated_list)
+	return final_result	
+
 
 
 # Problem 2
 def brute_force_cow_transport(cows,limit=10):
-    """
-    Finds the allocation of cows that minimizes the number of spaceship trips
-    via brute force.  The brute force algorithm should follow the following method:
+	"""
+	Finds the allocation of cows that minimizes the number of spaceship trips
+	via brute force.  The brute force algorithm should follow the following method:
 
-    1. Enumerate all possible ways that the cows can be divided into separate trips
-    2. Select the allocation that minimizes the number of trips without making any trip
-        that does not obey the weight limitation
-            
-    Does not mutate the given dictionary of cows.
+	1. Enumerate all possible ways that the cows can be divided into separate trips
+	2. Select the allocation that minimizes the number of trips without making any trip
+		that does not obey the weight limitation
+			
+	Does not mutate the given dictionary of cows.
 
-    Parameters:
-    cows - a dictionary of name (string), weight (int) pairs
-    limit - weight limit of the spaceship (an int)
-    
-    Returns:
-    A list of lists, with each inner list containing the names of cows
-    transported on a particular trip and the overall list containing all the
-    trips
-    """
-    # TODO: Your code here
-    pass
+	Parameters:
+	cows - a dictionary of name (string), weight (int) pairs
+	limit - weight limit of the spaceship (an int)
+	
+	Returns:
+	A list of lists, with each inner list containing the names of cows
+	transported on a particular trip and the overall list containing all the
+	trips
+	"""
+	# TODO: Your code here
+	pass
 
-        
+		
 # Problem 3
 def compare_cow_transport_algorithms():
-    """
-    Using the data from ps1_cow_data.txt and the specified weight limit, run your
-    greedy_cow_transport and brute_force_cow_transport functions here. Use the
-    default weight limits of 10 for both greedy_cow_transport and
-    brute_force_cow_transport.
-    
-    Print out the number of trips returned by each method, and how long each
-    method takes to run in seconds.
+	"""
+	Using the data from ps1_cow_data.txt and the specified weight limit, run your
+	greedy_cow_transport and brute_force_cow_transport functions here. Use the
+	default weight limits of 10 for both greedy_cow_transport and
+	brute_force_cow_transport.
+	
+	Print out the number of trips returned by each method, and how long each
+	method takes to run in seconds.
 
-    Returns:
-    Does not return anything.
-    """
-    # TODO: Your code here
-    pass
+	Returns:
+	Does not return anything.
+	"""
+	# TODO: Your code here
+	pass
 
 
 """
@@ -108,10 +141,29 @@ lines to print the result of your problem.
 """
 
 cows = load_cows("ps1_cow_data.txt")
-limit=100
-print(cows)
+limit = 100
 
-print(greedy_cow_transport(cows, limit))
-print(brute_force_cow_transport(cows, limit))
+print(greedy_cow_transport({'MooMoo': 85, 'Horns': 50, 'Milkshake': 75, 'Lotus': 10, 'Muscles': 65, 'Louis': 45, 'Miss Bella': 15, 'Patches': 60, 'Polaris': 20, 'Clover': 5}, 100))
+print('\n',[['MooMoo', 'Miss Bella'], ['Milkshake', 'Polaris', 'Clover'], ['Muscles', 'Lotus'], ['Patches'], ['Horns', 'Louis']])
+''' Test Cases '''
+# print('TEST 1\n')
+# print(greedy_cow_transport({'MooMoo': 85, 'Horns': 50, 'Milkshake': 75, 'Lotus': 10, 'Muscles': 65, 'Louis': 45, 'Miss Bella': 15, 'Patches': 60, 'Polaris': 20, 'Clover': 5}, 100))
+# print('asnwer test 1:\n')
+# print([['MooMoo', 'Lotus'], ['Milkshake', 'Polaris'], ['Muscles', 'Polaris', 'Lotus'], ['Patches', 'Polaris', 'Miss Bella'], ['Horns', 'Louis']])
+
+# print('\n\nTEST 2\n')
+# print(greedy_cow_transport({'Lilly': 24, 'Betsy': 65, 'Abby': 38, 'Daisy': 50, 'Buttercup': 72, 'Dottie': 85, 'Willow': 35, 'Coco': 10, 'Patches': 12, 'Rose': 50}, 100))
+# print('asnwer test 2:\n')
+# print([['Dottie', 'Patches'], ['Buttercup', 'Lilly'], ['Betsy', 'Willow'], ['Daisy', 'Rose'], ['Abby', 'Coco']])
+
+# print('\n\nTEST 3\n')
+# print(greedy_cow_transport({'Betsy': 39, 'Abby': 28, 'Luna': 41, 'Buttercup': 11, 'Willow': 59, 'Coco': 59, 'Starlight': 54, 'Rose': 42}, 120))
+# print('answer test 3:\n')
+# print([['Willow', 'Coco'], ['Starlight', 'Rose', 'Buttercup'], ['Luna', 'Betsy', 'Abby']])
+
+
+
+# print(greedy_cow_transport(cows, limit))
+#print(brute_force_cow_transport(cows, limit))
 
 
