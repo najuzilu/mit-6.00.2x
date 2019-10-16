@@ -29,7 +29,7 @@ Two variants:
 * A vector, `L`, of length n, represents the set of available items. Each element of the vector is an item.
 * A vector, `V`, of length n, is used to indicate whether or not items are taken. If `V[i] = 1`, item `L[i]` is taken. If `V[i] = 0`, item `L[i]` is not taken.
 
-![Alt text](./knapsack_problem.png=250x)
+![Alt text](./knapsack_problem.png=250x250)
 
 ##### Brute Force Algorithm #####
 1. Enumerate all possible combinations of items. That is to say, generate all subsets of the set of subjects. This is called the **power set**.
