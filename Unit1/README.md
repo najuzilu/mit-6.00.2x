@@ -1,39 +1,48 @@
+## Welcome ##
+
+Computational Models:
+	* optimization models
+	* statistical models
+	* simulation models
+
 ## Lecture 1 - Optimization and the Knapsack Problem ##
+
+What is an optimization model:
+* An objective function that is to be maximized or minimized
+* A set of constraints (possibly empty) that must be honored
+
+__Takeaways__:
+* many problems of real impact can be formulated as an optimization model
+* reducing a seemingly new problem to an instance of well-known problem allows one to use pre-existing methods for solving them
+* solving optimization problems is computationally challenging
+* a greedy algorithm is often a practical approach to finding a pretty good _approximate_ solution to an optimization problem
 
 #### Knapsack Problem ####
 
-What is an optimization model?
-* objective function that is to be maximize or minimize
-* a set of constraints (possibly empty) that must be honored
-
-Takeaways:
-* solving optimization problems is computationally challenging
-* a greedy algorithm is often a practical approach to finding a pretty good **approximate** solution to an optimization problem
-
-**Kanpsack and Bin-packing Problems**
-
 Two variants:
-* 0/1 knapsack problem (much difficult then the next one)
-* continuous or fractional knapsack problem
+* 0/1 knapsack problem (harder)
+* Continuous or fractional knapsack problem
 
-**0/1 Knapsack Problem, Formalized**
+##### 0/1 Knapsack Problem, Formalized #####
+* Each item is represented by a pair, <value, weight>
+* The knapsack can accommodate items with a total weight of no more than `w`
+* A vector, `L`, of length n, represents the set of available items. Each element of the vector is an item.
+* A vector, `V`, of length n, is used to indicate whether or not items are taken. If `V[i] = 1`, item `L[i]` is taken. If `V[i] = 0`, item `L[i]` is not taken.
 
-* each item is represented by a pair `<value, weight>`
-* the knapsack can accommodate items with a total weight of no more than `w`
-* a vector `L` of length n represents the set of available items. Each element of the vector is an item
-* a vector `V` of length n is used to indicate whether or not items are taken. If `V[i]=1`, item `I[i]` is taken. If `V[i]=0`, item `I[i]` is not taken
+![Find a V that maximizes](https://github.com/najuzilu/MITx-6.00.2x/tree/master/Unit1/knapsack_problem.png)
 
-Find a V that maximizes:
-![Image](https://github.com/najuzilu/MITx-6.00.2x/tree/master/Unit%201/knapsacProblem.png)
+##### Brute Force Algorithm #####
+1. Enumerate all possible combinations of items. That is to say, generate all subsets of the set of subjects. This is called the **power set**.
+2. Remove all of the combinations whose total units exceeds the allowed weight.
+3. From the remaining combinations choose any one whose value is the largest.
+* often not practical
+* how big is the power set? 
+	* `2^n` ~ algorithm is exponential
+* how many possible different values can V have? 
+	* As many different binary numbers as can be represented in n bits
+* 0/1 knapsack problem is inherently exponential
 
-Brute force algorithm:  
-1. Enumerate all possible combinations of items. That is to say, generate all subsets of the set of subjects. This is called the **power set**
-2. Remove all of the combinations whose total units exceeds the allowed weight
-3. From the remaining combinations choose any one whose value is the largest (there might be more than one optimal solution)
-_This is often not practical_  
-**0/1 knapsack problem is inherently exponential**
-
-**Exercise 1**:  
+**Exercise 1**:
 1. Choose the item with the best value to weight ratio first.
 	* The algorithm does not run
 2. Choose the lighest object first
@@ -41,12 +50,21 @@ _This is often not practical_
 3. Choose the most valuable object first.
 	* The algorithm runs and returns a non-optimal solution.
 
-#### Greedy Algorithm ####
+##### Greedy Algorithm #####
 
 > while knapsack not full
 > put "best" available item in knapsack
 
-Class Food:
+* What does best mean?
+	* most valuable
+	* least expensive
+	* highest value/units
+
+ Food   | wine  | beer | pizza | burger | fries | coke | apple | donut |
+------- | ----- | ---- | ----- | ------ | ----- | ---- | ----- | ----- |
+value   |   89  |  90  |  30   |   50   |   90  |  79  |  90   |   10  |
+calories|  123  | 154  | 258   |   354  |  365  |  150 |  95   |  195  |
+
 ```python
 class Food(object):
 	def __init__(self, n, v, w):
@@ -66,65 +84,99 @@ class Food(object):
 	def __str__(self):
 		return self.name + ': <' + str(self.value) + ', ' + str(self.calories) + '>'
 
-def buildMenu(name, values, calories):
-	'''	names, values, calories lists of same length.
+def buildMenu(names, values, calories):
+	"""	names, values, calories lists of same length.
 		name a list of strings
-		values and calories lists of numbers
-		returns list of Foods'''
+		value and calories lists of numbers
+		return list of Foods """
 	menu = []
 	for i in range(len(values)):
 		menu.append(Food(names[i], values[i], calories[i]))
 	return menu
 
 def greedy(items, maxCost, keyFunction):
-	'''	Assumes items a list, maxCost >= 0,
-		keyFunction maps elements of items to numbers '''
-	itemCopy = sorted(items, key = keyFunction, reverse = True) # O(nlogn)
+	"""	Assumes items a list, maxCost >= 0,
+		keyFunction maps elements of items to numbers """
+	itemsCopy = sorted(items, key = keyFunction, reverse = True)
 	result = []
 	totalValue, totalCost = 0.0, 0.0
 
-	for i in range(len(itemCopy)): # O(n)
-		if(totalCost+itemCopy[i].getCost()) <= maxCost:
+	for i in range(len(items)):
+		if (totalCost+itemsCopy[i].getCost()) <= maxCost:
 			result.append(itemsCopy[i])
-			totalCost += itemCopy[i].getCost()
-			totalValue += itemCopy[i].getValue()
+			totalCost += itemsCopy[i].getCost()
+			totalValue += itemsCopy[i].getValue()
+
 	return (result, totalValue)
 
 def testGreedy(items, constraint, keyFunction):
-	taken, val = greedy(items. constraint, keyFunction)
+	taken, val = greedy(items, constraint, keyFunction)
 	print('Total value of items taken =', val)
 	for item in taken:
-		print(' ', item)
+		print('   ', item)
 
-def testGreedys(maxUnits):
+def testGreedys(foods, maxUnits):
 	print('Use greedy by value to allocate', maxUnits, 'calories')
 	testGreedy(foods, maxUnits, Food.getValue)
-
-	print('Use greedy by cost to allocate', maxUnits, 'calories')
+	print('\nUse greedy by cost to allocate', maxUnits, 'calories')
 	testGreedy(foods, maxUnits, lambda x: 1/Food.getCost(x))
-
-	print('Use greedy by density to allocate', maxUnits, 'calories')
+	print('\nUse greedy by density to allocate', maxUnits, 'calories')
 	testGreedy(foods, maxUnits, Food.density)
 
 names = ['wine', 'beer', 'pizza', 'burger', 'fries', 'cola', 'apple', 'donut', 'cake']
 values = [89, 90, 95, 100, 90, 79, 50, 10]
 calories = [123, 154, 258, 354, 365, 150, 95, 195]
 foods = buildMenu(names, values, calories)
-testGreedys(750)
-testGreedys(1000)
-
+testGreedys(foods, 800)
 ```
+**Greedy Algorithm Efficiency**:
+* sorting is done in `n log n` where `n = len(items)` ~ lower boundary
+* `for i in range(len(itemsCopy))` is `n`
+* `n log n + n = n log n` which is (much less) `<< 2^n`
 
-**Why different answers?**
-* sequence of locally **optimal** choices don't always yield a globally optimal solution
+**Lambda Functions**:
+* Used to create anonymous functions
+* lambda <id1, id2, ..., idn> : <expression>
+* returns a function of n arguments
 
-**lambda**  
-* used to create anonymous functions
+```python
+f1 = lambda x: x
+f1(3)
+f1('test')
+
+f2 = lambda x, y: x + y
+f2(2, 3)
+f2('Hello', 'Program')
+
+f3 = lambda x, y : 'factor' if (x%y == 0) else 'not factor'
+f3(3, 6)
+f3(3, 1)
+```
+**Why get different answers**?
+* sequence of locally "optimal" choices don't always yield a globally optimal solution
+* is greedy by density always a winner?
+	* try testGreedys(foods, 1000)
+
+**Pros & Cons of Greedy**
+* easy to implement
+* computationally efficient
+* **but** does not always yield the best solution
+	* don't even know how good the approximation is
+
+**Exercise 2**:
+1. computer, no more space
+2. book, vase
+3. vase, clock
 
 **Exercise 3**:
-1. n
-2. n^2
-3. 2^n
+1. O(n)
+2. O(n^2)
+3. O(2^n)
+
+## Lecture 2 - Decision Trees and Dynamic Programming ##
+
+
+------------------------------------------------------------------------------------------------------
 
 ## Lecture 2 - Decision Trees & Dynamic Programming ##
 
