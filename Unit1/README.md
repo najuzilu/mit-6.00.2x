@@ -1,9 +1,9 @@
 ## Welcome ##
 
 Computational Models:
-	* optimization models
-	* statistical models
-	* simulation models
+* optimization models
+* statistical models
+* simulation models
 
 ## Lecture 1 - Optimization and the Knapsack Problem ##
 
@@ -29,7 +29,7 @@ Two variants:
 * A vector, `L`, of length n, represents the set of available items. Each element of the vector is an item.
 * A vector, `V`, of length n, is used to indicate whether or not items are taken. If `V[i] = 1`, item `L[i]` is taken. If `V[i] = 0`, item `L[i]` is not taken.
 
-![Find a V that maximizes](https://github.com/najuzilu/MITx-6.00.2x/tree/master/Unit1/knapsack_problem.png)
+![Find a V that maximizes](./knapsack_problem.png)
 
 ##### Brute Force Algorithm #####
 1. Enumerate all possible combinations of items. That is to say, generate all subsets of the set of subjects. This is called the **power set**.
