@@ -175,56 +175,69 @@ f3(3, 1)
 
 ## Lecture 2 - Decision Trees and Dynamic Programming ##
 
-
-------------------------------------------------------------------------------------------------------
-
-## Lecture 2 - Decision Trees & Dynamic Programming ##
-
 #### Brute Force Algorithms ####
 
-Brute Force Algorithm:
-* enumerate all possible combinations of items
-* remove all the combinations whole total units exceeds the allowed weight
-* from the remaining combinations choose any one whose value is the largest
-
-**Search Tree/Decision Tree Implementation**:
+##### Search Tree Implementation #####
+* the tree is build top down starting with the root
+* the first element is selected from the still to be considered items
+	* if there is room for that item in the knapsack, a node is constructed that reflects the consequence of choosing to take that item. By convention, we draw that as the left chid
+	* we also explore the consequences of not taking that items. this is the right child
+* the process is then applied recursively to non-leaf children (aka decision trees or search trees)
+* finally choose the node with the highest value
 * left-frist, depth-first enumeration
-* left - YES
-* right - NO  
-**Computational Complexity**:
-* time based on number of nodes generated
-* number of levels = number of items to choose from
-* number of nodes at level i is 2^i (exponential complexity)
-* an obvious optimization: don't explore parts of tree that violate constraint but this _does not_ change complexity  
-**Header for Decision Tree Implementation**
+* left - YES (to take food)
+* right - NO  (not take food)
+* **we're guaranteed to have an optimal solution because we look at all possible solutions**
+
+Computation required to build a search trees:
+* time based on number of nodes generated (look at the number of levels and nodes per level)
+* number of level is number of items to choose from
+* number of nodes at level i is `2^i`
+* So, if there are n items the number of nodes is: 
+![Alt text](./comp_complexity.png)
+* Computational complexity is `O( 2^(i+1) )`
+* an obvious optimization is to not explore the parts of the tree that violate constrains
+	* does not change the computational complexity
+
 ```python
 def maxVal(toConsider, avail):
-	''' Assumes toConsider a list of items, avail a weight
-		Returns a tuple of the total value of a solution to 0/1 knapsack problem and the items of that solution
-	'''
-	# if there is nothing to consider or value is 0
-	if toConsider == [] or avail = 0:
-		result = (0, ())
-	# however, first thing we're going to do is check the first item fits in the knapsack if first item won't fit in the knapsack I can assume I'm not going to take it and I go to the next item
-	elif toConsider[0].getUnits() > avail:
-		result = maxVal(toConsider[1:], avail)
-	# if it does fit in the knapsack, I have to consider two branches: left where I take it, and right branch where I do not.
+	""" Assumes toConsider a list of items,
+			avail a weight
+		Returns a tuple of the total value of a 
+			solution to 0/1 knapsack problem 
+			and the items of that solution"""
+	if toConsider == [] or avail == 0:
+		result = (0, ()) # no value and no items
+
+	elif toConsider[0].getCost() > avail:
+		result = maxVal(toConsider[1:], avail) # pass cuz units greater than what's available
+
 	else:
 		nextItem = toConsider[0]
-		withVal, withToTake = maxVal(toConsider[1:], avail - nextItem.getUnits())
+		# Explore left branch
+		withVal, withToTake = maxVal(toConsider[1:], avail - nextItem.getCost())
 		withVal += nextItem.getValue()
+
+		# Explore right branch
 		withoutVal, withoutToTake = maxVal(toConsider[1:], avail)
 
-		# choose the better of the two branches and return the results
+		# Explore better branch
 		if withVal > withoutVal:
-			result = (withVal, withToTake + (nextItem, ))
+			result = (withVal, withToTake + (nextItem,))
 		else:
 			result = (withoutVal, withoutToTake)
 	return result
-# We are not building the search tree. The local variable result records best solution found so far
 ```
+* above we're not actually building the search tree
+* the local variable `result` records best solution found so far
 
-##### Exercise 1 #####
+__Search Tree Worked Great__
+* Gave us a better answer
+* Finished quickly
+* But `2^8` is not a large number
+	* We should look at what happens when we have a more extensive menu to choose from
+
+**Exercise 1**
 ```python
 # generate all combinations of N items
 def powerSet(items):
@@ -234,133 +247,189 @@ def powerSet(items):
 		combo = []
 		for j in range(N):
 			# test bit jth of integer i
-			if (i >> j) % 2 == 1:
+			if (i >> j) % 2 == 1: # i >> j == i // (2^j)
 				combo.append(items[j])
 		yield combo
-```
-Functions referenced in the grader:
-```python
-class Item(object):
-	def __init__(self, n, v, w):
-		self.name = n
-		self.value = float(v)
-		self.weight = float(w)
-	def getName(self):
-		return self.name
-	def getValue(self):
-		return self.value
-	def getWeight(self):
-		return self.weight
-	def __str__(self):
-		return '<' + self.name + ', ' + str(self.value) + ', '\
-					 + str(self.weight) + '>'
-def buildItems():
-	return [Item(n,v,w) for n,v,w in (('clock', 175, 10), ('painting', 90, 9), ('radio', 20, 4), ('vase', 50, 2),('book', 10, 1),('computer', 200, 20))]
-
-def buildRandomItems(n):
-	return [Item(str(i),10*random.randint(1,10),random.randint(1,10))
-			for i in range(n)]
 
 def yieldAllCombos(items):
-    N = len(items)
-    # Enumerate the 3**N possible combinations   
-    for i in range(3**N):
-        bag1 = []
-        bag2 = []
-        for j in range(N):
-            if (i // (3 ** j)) % 3 == 1:
-                bag1.append(items[j])
-            elif (i // (3 ** j)) % 3 == 2:
-                bag2.append(items[j])
-        yield (bag1, bag2)
+	"""
+	  Generates all combinations of N items into two bags, whereby each 
+	  item is in one or zero bags.
 
-items = buildItems()
-combos = yieldAllCombos(items)
+	  Yields a tuple, (bag1, bag2), where each bag is represented as 
+	  a list of which item(s) are in each bag.
+	"""
+	N = len(items)
+	# enumerate the 2**N possible combinations
+	for i in range(3**N):
+		combo1, combo2 = [], []
+		for j in range(N):
+			if (i // (3**j)) % 3 == 1:
+				combo1.append(items[j])
+			elif (i // (3**j)) % 3 == 2:
+				combo2.append(items[j])
+		yield (combo1, combo2)
+
+# items:
+names = ['wine', 'beer', 'pizza', 'burger', 'fries', 'cola', 'apple', 'donut', 'cake']
+
+foo = yieldAllCombos(names)
+for i in range(3**(len(names))):
+	foo.__next__()
 ```
 
-#### Recursive Fibonacci ####
+##### Call Tree for Recursive Fibonnaci(6) = 13 #####
+
+```python
+import random
+
+def buildLargeMenu(numItems, maxVal, maxCost):
+	items = []
+	for i in range(numItems):
+		items.append(Food(str(i), random.randint(1, maxVal), random.randint(1, maxCost)))
+	return items
+
+for numItems in (5, 10, 15, 20, 25, 30, 35, 40, 45):
+	items = buildLargeMenu(numItems, 90, 250)
+	testMaxVal(items, 750, False)
+```
 
 **Dynamic Programming**
+* sometime a name is just a name
+> The 1950s were not good years for mathematical research... I felt I had to do something to shield 
+> Wilson and the Air Force from the fact that I was really doing mathematics... What title, what name, 
+> could I choose?... it’s impossible to use the word, dynamic, in a pejorative sense. Try thinking of 
+> some combination that will possibly give it a pejorative meaning. It’s impossible. Thus, I thought 
+> dynamic programming was a good name. It was something not even a Congressman could object to. So I 
+> used it as an umbrella for my activities.
 
 ```python
 def fib(n):
 	if n == 0 or n == 1:
 		return 1
 	else:
-		return fib(n - 1) + fib(n - 2) 
-# time: O(n)
+		return fib(n - 1) + fib(n - 2)
+fib(120)
 ```
+**Memoization**: record the value returned by the first time we call a method(x); and then, look it up rather than compute it each time.
+	* trade a time for space
+	* create a table to record what we've done
+		* ex: before computing fib(x), check if value of fib(x) already stored in the table
+		* if so, look it up
+		* if not, compute it and add it to table
 
-* Create a table to record what we've done
-	* before computing fib(x), check if value of fib(x) already stored in the table
-	* if so, look it up
-	* if not, compute it and then add it to table
-* Called **memoization**
-
-**Using a Memo to Compute Fibonnaci**:
 ```python
+# Using Memoization to Compute Fibonnaci
 def fastFib(n, memo = {}):
-	'''	Assumes n is an int >= 0, memo used only by recursive calls
-		Returns Fibonacci of n
-	'''
+	"""	Assumes n is an int >= 0, memo used only by recursive calls
+		Returns Fibonnaci of n"""
 	if n == 0 or n == 1:
 		return 1
 	try:
 		return memo[n]
 	except KeyError:
-		result = fastFib(n-1, memo) + fastFib(n-2, memo)
+		result = fastFib(n - 1, memo) + fastFib(n-2, memo)
 		memo[n] = result
 		return result
 ```
+__When does it work?__
+* Optimal substructure: a globally optimal solution can be found by combining optimal solutions to local subproblems
+	* for x > 1, fib(x) = fib(x - 1) + fib(x - 2)
+* Overlapping subproblems: finding an optimal solution involves solving the same problem multiple times
+	* compute fib(x) many times
 
-**When does dynamic programming work well?**
-* Optimal substructure: a globally optimal solution can be found by computing optimal solutions to local subproblems
-	* For x > 1, fib(x) = fib(x-1) + fib(x-2)
-* Overlapping subproblems: finding an optimal solution involves solving the same problem multple times
-	* Compute fib(x) or many times
+##### Dynamic Programming #####
 
-#### Dynamic Programming ####
+For the 0/1 knapsack problem, it has an optimal substructure but we're computing different things every time so it does not have overlapping subproblems. We can run a dynamic programming algorithm on the 0/1 knapsack problem but it wouldn't give us any speedup.  
+If the knapsack problem includes duplicate items, then yes, it has overlapping subproblems.  
 
-Dynamic programming can be used to solve a Knapsack problem:
-* Add memo as a third argument: `def fastMaxVal(toConsider, avail, memo={})`
-* Key of memo is a tuple
-	* (items left to be considered, available weight)
-	* items left to be considered represented by len(toConsider)
+
+If we look at the 0/1 knapsack problem and we're only worried about the weight leftover, we notice that this problem also has overlapping subproblems. We can, then, modify `maxVal` to use memoization:
+	* add memo as a third argument: `def fastMaxVal(toConsider, avail, memo={}):`
+	* key of memo is a tuple:
+		* (items left to be considered, available weight)
+		* items left to be considered represented by len(toConsider)
+	* first thing body of function does is check whether the optimal choice of items given the available weight is already in the memo
+	* last thing body of function does is update the memo
 ```python
 def fastMaxVal(toConsider, avail, memo = {}):
-	''' Assumes toConsider a list of items, avail a weight
-		Returns a tuple of the total value of a solution to 0/1 knapsack problem and the items of that solution
-	'''
+	"""	Assumes toConsider a list of subjects, avail a weight
+			memo supplied by recursive calls
+		Returns a tuple of the total value of a solution to the 
+			0/1 knapsack problem and the subjects of that solution"""
 	if (len(toConsider), avail) in memo:
-		result = memo[(len(toConsider), avail) ]
-	elif toConsider == [] or avail = 0:
+		result = memo[(len(toConsider), avail)]
+	elif toConsider == [] or avail == 0:
 		result = (0, ())
-	elif toConsider[0].getUnits() > avail:
+	elif toConsider[0].getCost() > avail:
 		# explore right branch only
-		result = maxVal(toConsider[1:], avail, memo)
+		result = fastMaxVal(toConsider[1:], avail, memo)
 	else:
 		nextItem = toConsider[0]
 		# explore left branch
-		withVal, withToTake = fastMaxVal(toConsider[1:], avail - nextItem.getUnits(), memo)
+		withVal, withToTake = fastMaxVal(toConsider[1:], avail - nextItem.getCost(), memo)
 		withVal += nextItem.getValue()
 		# explore right branch
 		withoutVal, withoutToTake = fastMaxVal(toConsider[1:], avail, memo)
 
 		# choose better branch
 		if withVal > withoutVal:
-			result = (withVal, withToTake + (nextItem, ))
+			result = (withVal, withToTake + (nextItem,))
 		else:
 			result = (withoutVal, withoutToTake)
-		memo[(len(toConsider), avail)] = result
+	memo[(len(toConsider), avail)] = result
 	return result
-```
 
-```python
-# change recursion depth
-import sys
-sys.getrecursionlimit()
-sys.setrecursionlimit(2000)
+# rewrote testMaxVal method
+def testMaxVal(foods, maxUnits, algorithm, printItems = True):
+	print('Menu contains', len(foods)m 'items')
+	print('Use search tree to allocate', maxUnits, 'calories')
+	val, taken = algorithm(foods, maxUnits)
+	if printItems:
+		print('Total value of items taken =', val)
+		for item in taken:
+			print('   ', item)
 ```
+* Problem is exponential
+* Have we overturned the laws of the universe?
+* Is dynamic programming a miracle?
+* No, but computational complexity can be subtle
+* Running time of fastMaxVal is governed by numbers of distinct pairs, <toConsider, avail>
+	* Number of possible values of toConsider bounded by len(items)
+	* Possible values of avail a bit harder to characterize
+		* Bounded by number of distinct sums of weights
+	* Covered in more detail in assigned reading
+
+__Summary of Lectures 1-2__:
+* Many problems of practical importance can be formulated as **optimization problems**
+* **Greedy algorithms** often provide adequate (though not necessarily optimal) solutions
+* Finding an optimal solution is usually **exponentially hard**
+* But **dynamic programming** often yields good performance for a subclass of optimization problems - those with optimal substructure and overlapping subproblems
+	* solution always correct
+	* fast under the right circumstances
+
+**Exercise 2**
+1. Dynamic programming can be used to solve optimization problems where the size of the space of possible solutions is exponentially large. **TRUE**
+2. Dynamic programming can be used to find an approximate solution to an optimization problem, but cannot be used to find a solution that is guaranteed to be optimal. **FALSE**
+3. Recall that sorting a list of integers can take `𝑂(𝑛log𝑛)` using an algorithm like merge sort. Dynamic programming can be used to reduce the order of algorithmic complexity of sorting a list of integers to something below  `𝑛log𝑛` , where `n` is the length of the list to be sorted. **FALSE**
+4. I need to go up a flight of  𝑁  stairs. I can either go up 1 or 2 steps every time. How many different ways are there for me to traverse these steps? Does this problem have optimal substructure and overlapping subproblems? **It has optimal substructure and overlapping subproblems**
+
+
+------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ##### Exercise 2 #####
 
@@ -505,7 +574,7 @@ nodes.append(Node("CBA")) # nodes[5]
 
 g = Graph()
 for n in nodes:
-    g.addNode(n)
+	g.addNode(n)
 
 ''' bug - but potential
 def permutations(node_name):
@@ -656,13 +725,13 @@ Let A be the source node, and B be the destination in KN. How many paths of leng
 **Answer**: 
 ```python
 class WeightedEdge(Edge):
-    def __init__(self, src, dest, weight):
-        Edge.__init__(self, src, dest)
-        self.weight = weight
+	def __init__(self, src, dest, weight):
+		Edge.__init__(self, src, dest)
+		self.weight = weight
 
-    def getWeight(self):
-        return self.weight
+	def getWeight(self):
+		return self.weight
 
-    def __str__(self):
-    	return '{}->{} ({})'.format(self.src.getName(), self.dest.getName(), self.weight)
+	def __str__(self):
+		return '{}->{} ({})'.format(self.src.getName(), self.dest.getName(), self.weight)
 ```
