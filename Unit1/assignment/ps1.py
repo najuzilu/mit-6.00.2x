@@ -54,22 +54,31 @@ def greedy_cow_transport(cows,limit = 10):
 	transported on a particular trip and the overall list containing all the
 	trips
 	"""
+	# First step is sort largest to smallest
+	sortedCows = sorted(cows.items(), key = lambda x: x[1], reverse = True)
+	allTrips = []
+	indexToRemove = []
 
-	final_result = []
-	copied_dict = cows.copy()
+	while len(sortedCows) > 0:
 
-	sorted_list = sorted(cows.items(), key=lambda x: x[1], reverse = True)
+		trip = []
+		indexToRemove = []
+		limitCopy = limit # reset limitCopy to limit value
 
-	while sum(copied_dict.values()):
-		temp = []
-		weight = 0
-		for key, value in sorted_list:
-			if copied_dict[key] != 0 and value <= limit - weight:
-				temp.append(key)
-				weight += value
-				copied_dict[key] = 0
-		final_result.append(temp)
-	return final_result
+		for i in range(0, len(sortedCows)):
+			cow = sortedCows[i]
+			if cow[1] <= limitCopy:
+				trip.append((cow[0]))
+				limitCopy -= cow[1]
+				indexToRemove.append(i)
+
+		# indextoRemove
+		for index in sorted(indexToRemove, reverse = True):
+			sortedCows.pop(index)
+
+		allTrips.append(trip)
+
+	return allTrips
 
 
 # Problem 2
@@ -125,25 +134,25 @@ cows = load_cows("ps1_cow_data.txt")
 limit = 100
 
 
-''' Test Cases '''
-print('TEST 1\n')
-print(greedy_cow_transport({'MooMoo': 85, 'Horns': 50, 'Milkshake': 75, 'Lotus': 10, 'Muscles': 65, 'Louis': 45, 'Miss Bella': 15, 'Patches': 60, 'Polaris': 20, 'Clover': 5}, 100))
-print('asnwer test 1:\n')
-print([['MooMoo', 'Lotus'], ['Milkshake', 'Polaris'], ['Muscles', 'Polaris', 'Lotus'], ['Patches', 'Polaris', 'Miss Bella'], ['Horns', 'Louis']])
+# ''' Test Cases '''
+# print('TEST 1\n')
+# print(greedy_cow_transport({'MooMoo': 85, 'Horns': 50, 'Milkshake': 75, 'Lotus': 10, 'Muscles': 65, 'Louis': 45, 'Miss Bella': 15, 'Patches': 60, 'Polaris': 20, 'Clover': 5}, limit))
+# print('asnwer test 1:\n')
+# print([['MooMoo', 'Lotus'], ['Milkshake', 'Polaris'], ['Muscles', 'Polaris', 'Lotus'], ['Patches', 'Polaris', 'Miss Bella'], ['Horns', 'Louis']])
 
-print('\n\nTEST 2\n')
-print(greedy_cow_transport({'Lilly': 24, 'Betsy': 65, 'Abby': 38, 'Daisy': 50, 'Buttercup': 72, 'Dottie': 85, 'Willow': 35, 'Coco': 10, 'Patches': 12, 'Rose': 50}, 100))
-print('asnwer test 2:\n')
-print([['Dottie', 'Patches'], ['Buttercup', 'Lilly'], ['Betsy', 'Willow'], ['Daisy', 'Rose'], ['Abby', 'Coco']])
+# print('\n\nTEST 2\n')
+# print(greedy_cow_transport({'Lilly': 24, 'Betsy': 65, 'Abby': 38, 'Daisy': 50, 'Buttercup': 72, 'Dottie': 85, 'Willow': 35, 'Coco': 10, 'Patches': 12, 'Rose': 50}, 100))
+# print('asnwer test 2:\n')
+# print([['Dottie', 'Patches'], ['Buttercup', 'Lilly'], ['Betsy', 'Willow'], ['Daisy', 'Rose'], ['Abby', 'Coco']])
 
-print('\n\nTEST 3\n')
-print(greedy_cow_transport({'Betsy': 39, 'Abby': 28, 'Luna': 41, 'Buttercup': 11, 'Willow': 59, 'Coco': 59, 'Starlight': 54, 'Rose': 42}, 120))
-print('answer test 3:\n')
-print([['Willow', 'Coco'], ['Starlight', 'Rose', 'Buttercup'], ['Luna', 'Betsy', 'Abby']])
+# print('\n\nTEST 3\n')
+# print(greedy_cow_transport({'Betsy': 39, 'Abby': 28, 'Luna': 41, 'Buttercup': 11, 'Willow': 59, 'Coco': 59, 'Starlight': 54, 'Rose': 42}, 120))
+# print('answer test 3:\n')
+# print([['Willow', 'Coco'], ['Starlight', 'Rose', 'Buttercup'], ['Luna', 'Betsy', 'Abby']])
 
 
 
-# print(greedy_cow_transport(cows, limit))
+print(greedy_cow_transport({"Jesse": 6, "Maybel": 3, "Callie": 2, "Maggie": 5}, 10))
 #print(brute_force_cow_transport(cows, limit))
 
 
