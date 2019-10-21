@@ -30,7 +30,6 @@ def load_cows(filename):
 		cow_dict[line_data[0]] = int(line_data[1])
 	return cow_dict
 
-
 # Problem 1
 def greedy_cow_transport(cows,limit = 10):
 	"""
@@ -150,9 +149,5 @@ limit = 100
 # print('answer test 3:\n')
 # print([['Willow', 'Coco'], ['Starlight', 'Rose', 'Buttercup'], ['Luna', 'Betsy', 'Abby']])
 
-
-
-print(greedy_cow_transport({"Jesse": 6, "Maybel": 3, "Callie": 2, "Maggie": 5}, 10))
-#print(brute_force_cow_transport(cows, limit))
 
 

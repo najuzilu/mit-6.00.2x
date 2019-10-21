@@ -414,89 +414,71 @@ __Summary of Lectures 1-2__:
 3. Recall that sorting a list of integers can take `𝑂(𝑛log𝑛)` using an algorithm like merge sort. Dynamic programming can be used to reduce the order of algorithmic complexity of sorting a list of integers to something below  `𝑛log𝑛` , where `n` is the length of the list to be sorted. **FALSE**
 4. I need to go up a flight of  𝑁  stairs. I can either go up 1 or 2 steps every time. How many different ways are there for me to traverse these steps? Does this problem have optimal substructure and overlapping subproblems? **It has optimal substructure and overlapping subproblems**
 
-
-------------------------------------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-##### Exercise 2 #####
-
-1. Dynamic programming can be used to solve optimization problems where the size of the space of possible solutions is exponentially large.  
-**Answer**: True
-
-2. Dynamic programming can be used to find an approximate solution to an optimization problem, but cannot be used to find a solution that is guaranteed to be optimal.  
-**Answer**: False
-
-3. Recall that sorting a list of integers can take `O(n log n` using an algorithm like merge sort. Dynamic programming can be used to reduce the order of algorithmic complexity of sorting a list of integers to something below `n log n`, where `n` is the length of the list to be sorted.  
-**Answer**: False
-
-4. Problem: I need to go up a flight of `N` stairs. I can either go up 1 or 2 steps every time. How many different ways are there for me to traverse these steps? For example:
-```
-3 steps -> could be 1,1,1 or 1,2 or 2,1
-4 steps -> could be 1,1,1,1 or 1,1,2 or 1,2,1 or 2,1,1 or 2,2
-5 steps -> could be 1,1,1,1,1 or 1,1,1,2 or 1,1,2,1 or 1,2,1,1 or 2,1,1,1 or 2,2,1 or 1,2,2 or 2,1,2
-```
-Does this problem have optimal substructure and overlapping subproblems?  
-**Answer**: It has optimal substructure and overlapping subproblems
-
 ## Lecture 3 - Graph Problems ##
 
-#### Graphs ####
-
-Model road system using a digraph:
+Recap: **Computational Models** are programs that help us understand the world and solve practical problems  
+**What's a Graph**?
+* a set of nodes (vertices)
+	* might have properties associated with them
+* set of edges (arcs) each consisting of a pair of nodes
+	* undirected (graph)
+	* directed (digraph)
+		* sourse (parent) and destination (child) nodes
+	* unweighted or weighted
+**Why Graphs**?
+* to capture useful relationships among entities
+	* rail links between Paris and London
+	* how the atoms in a molecule related to one another
+	* ancestral relationship
+**Trees: An Important Special Case**:
+* a directed graph in which each pair of nodes is connected by a single path
+	* recall the search trees we used to solve knapsack problem
+**Getting John to the Office**:
 * nodes: points where roads end or meet
-* edges: connetions between points
+* edges: connections between points
 	* each edge has a weight indicating time it will take to get from source node to destination node for that edge
+* solve a graph optimization problem
+	* shorted weighted path between my house and my office
 
-First reported use of graph theory:
-* Bridges of Konigsberg (1735)
-* Possible to take a walk that traverses each pf the 7 bridges exactly once?
-Leonhard Euler's Model:
+**Leonhard Euler's Model - Konigsberg Bridge Problem**:
 * each island a node
 * each bridge an undirected edge
-* is there a path that contains each edge exactly once? No!
+* model abstracts away irrelevant details
+	* size of island
+	* length of bridge
+* is there a path that contains each edge exactly once?
 
-##### Exercise 1 #####
+**Exercise 1**
+1. Each vertex is a class, while a directional edge indicates that one class must come before another.
+2. Vertices represent permutations of the students in line. Edges connect two permutations if one can be made into the other by swapping two adjacent students.
 
-1. A school's course catalog?    
-**Answer**: B) Each vertex is a class, while a directional edge indicates that one class must come before another.
-
-2. Students in a line?  
-**Answer**: A) Vertices represent permutations of the students in line. Edges connect two permutations if one can be made into the other by swapping two adjacent students.
-
-#### Graph Class ####
+##### Graph Class #####
 
 ```python
 class Node(object):
 	def __init__(self, name):
-		'''	Assumes name is a string '''
+		""" Assumes name is a string"""
 		self.name = name
+
 	def getName(self):
 		return self.name
+
 	def __str__(self):
 		return self.name
 
+
 class Edge(object):
 	def __init__(self, src, dest):
-		'''	Assumes src and dest are nodes '''
+		""" Assumes src and dest are nodes"""
 		self.src = src
-		self.dest = dest 
+		self.dest = dest
+
 	def getSource(self):
 		return self.src
+
 	def getDestination(self):
-		return self.dest 
+		return self.dest
+
 	def __str__(self):
 		return self.src.getName() + ' -> ' + self.dest.getName()
 ```
@@ -505,64 +487,88 @@ class Edge(object):
 * Adjacency matrix
 	* rows: source nodes
 	* columns: destination nodes
-	* cell[s,d] = 1 if there is an edge from s to do, otherwise 0
-
+	* cell[s,d] = 1 if there is an edge from s to do, 0 otherwise
 * Adjacency list
 	* associate with each node a list of destination nodes
 
 ```python
 class Digraph(object):
-	'''	edges is a dict mapping each node to a list of its children '''
+	""" edges is a dict mapping each node to a list of its children """
 	def __init__(self):
 		self.edges = {}
+
 	def addNode(self, node):
 		if node in self.edges:
 			raise ValueError('Duplicate node')
 		else:
 			self.edges[node] = []
+
 	def addEdge(self, edge):
 		src = edge.getSource()
 		dest = edge.getDestination()
 		if not (src in self.edges and dest in self.edges):
 			raise ValueError('Node not in graph')
 		self.edges[src].append(dest)
+
 	def childrenOf(self, node):
 		return self.edges[node]
+
 	def hasNode(self, node):
 		return node in self.edges
+
 	def getNode(self, name):
 		for n in self.edges:
 			if n.getName() == name:
-				return n 
+				return n
 		raise NameError(name)
+
 	def __str__(self):
 		result = ''
 		for src in self.edges:
 			for dest in self.edges[src]:
 				result = result + src.getName() + ' -> ' + dest.getName() + '\n'
-		return result[:-1] #omit final newline
+		return result[:-1] # omit final newline
 
 class Graph(Digraph):
-	def addEdge(self, edge):
+	""" Any program that works with a digraph will also work with a graph, but not vice versa.
+	"""
+
+	def addEdge(self, edge): #overwrite the add
 		Digraph.addEdge(self, edge)
 		rev = Edge(edge.getDestination(), edge.getSource())
 		Digraph.addEdge(self, rev)
 ```
 
-**Why is Graph a subclass of digraph?**  
-_If client code works correctly using an instance of supertype, it should also work correctly when an instance of the subtype is substituted for the instance of the supertype_
+**Why is Graph a subclass of digraph**?
+* If client code works correctly using an instance of the supertype, it should also work correctly when an instance of the subtrype is substituted for the instance of the supertype.  
+**A classic Graph Optimization Problem**:
+* Shortest path from n1 to n2
+	* shortest sequence of edges such that
+		* source node of first edge is n1
+		* destination of last edge is n2
+		* for edges, e1 and e2, in the sequence, if e2 follows e1 in the sequence, the source of e2 is the destination of e1
+* Shortest weighted path
+	* Minimize the sum of the weights of the edges in the path
 
-**A classic graph optimization problem**  
 ```python
 def buildCityGraph():
 	g = Digraph()
-	for name in ('Boston', 'Providence', 'New York'):
+	for name in ('Boston', 'Providence', 'New York', 'Chicago', 'Denver', 'Phoenix', 'Los Angeles'):
 		g.addNode(Node(name))
-	g.addEdge(Edge(g.getNode('Boston'), g.getNode('New York'))) # etc
+	g.addEdge(Edge(g.getNode('Boston'), g.getNode('Providence')))
+	g.addEdge(Edge(g.getNode('Boston'),g.getNode('New York')))
+	g.addEdge(Edge(g.getNode('Providence'),g.getNode('Boston')))
+	g.addEdge(Edge(g.getNode('Providence'),g.getNode('New York')))
+	g.addEdge(Edge(g.getNode('New York'),g.getNode('Chicago')))
+	g.addEdge(Edge(g.getNode('Chicago'),g.getNode('Denver')))
+	g.addEdge(Edge(g.getNode('Denver'),g.getNode('Phoenix')))
+	g.addEdge(Edge(g.getNode('Denver'),g.getNode('New York')))
+	g.addEdge(Edge(g.getNode('Chicago'),g.getNode('Phoenix')))
+	g.addEdge(Edge(g.getNode('Los Angeles'),g.getNode('Boston')))
+
 ```
 
-##### Exercise 2 #####
-
+**Exercise 2**
 ```python
 nodes = []
 nodes.append(Node("ABC")) # nodes[0]
@@ -574,28 +580,8 @@ nodes.append(Node("CBA")) # nodes[5]
 
 g = Graph()
 for n in nodes:
-	g.addNode(n)
+    g.addNode(n)
 
-''' bug - but potential
-def permutations(node_name):
-	result = []
-	for i in range(2):
-		node = list(node_name)
-		if i == 0:
-			node[0], node[1] = node[1], node[0]
-		else:
-			node[1], node[2] = node[2], node[1]
-		result.append(''.join(node))
-	return result
-
-for node in nodes:
-	perm = permutations(node.getName())
-	for each in perm:
-		try:
-			print(Edge(g.getNode(each), node))
-			#g.addEdge(Edge(g.getNode(each), node))
-		except NameError:
-			continue'''
 g.addEdge(Edge(nodes[0], nodes[1]))
 g.addEdge(Edge(nodes[0], nodes[2]))
 g.addEdge(Edge(nodes[1], nodes[4]))
@@ -603,6 +589,143 @@ g.addEdge(Edge(nodes[2], nodes[3]))
 g.addEdge(Edge(nodes[3], nodes[5]))
 g.addEdge(Edge(nodes[4], nodes[5]))
 ```
+
+##### Finding the Shortest Path #####
+
+##### Depth-first search (DFS) #####
+
+* similar to left-first depth-first method of enumerating a search tree (Lecture 2)
+* main difference is that graph might have cycles, so we must keep track of what nodes we have visited
+
+```python
+def printPath(path):
+	""" Assumes path is a list of nodes """
+	result = ''
+	for i in range(len(path)):
+		result = result + str(path[i])
+		if i != len(path) - 1:
+			result = result + ' --> '
+	return result
+
+def DFS(graph, start, end, path, shortest, toPrint = False):
+	""" Assumes graph is a Digraph; start and end are nodes;
+			path and shortest are lists of nodes
+		Returns a shortest path from start to end in graph """
+	path = path + [start]
+
+	if toPrint:
+		print('Current DFS path:', printPath(path))
+	if start == end:
+		return path
+	for node in graph.childrenOf(start):
+		if node not in path: # avoid cycles
+			if (shortest == None) or (len(path) < len(shortes)):
+				newPath = DFS(graph, node, end, path, shortest, toPrint)
+				if newPath != None:
+					shortest = newPath
+		elif toPrint:
+			print('Already visited', node)
+	return shortest
+
+def shortestPath(graph, start, end):
+	""" Assumes graph is Digraph; start and end are nodes;
+		Returns a shortest path from start to end in graph """
+	return DFS(graph, start, end, [], None)
+
+def testSP(source, destination):
+	g = buildCityGraph(Digraph)
+	sp = shortestPath(g, g.getNode(source), g.getNode(destination), toPrint = True)
+
+	if sp != None:
+		print('Shortest path from', source, 'to', destination, 'is', printPath(sp))
+	else:
+		print('There is no path from', source, 'to', destination)
+```
+
+##### Breadth-first search (BFS) #####
+
+```python
+def BFS(graph, start, end, toPrint = False):
+	initPath = [start]
+	pathQueue = [initPath]
+
+	if toPrint:
+		print('Current BFS path:', printPath(pathQueue))
+
+	while len(pathQueue) != 0:
+		# Get and remove oldest element in pathQueue
+		tmpPath = pathQueue.pop(0)
+		if toPrint:
+			print('Current BFS path:', printPath(tmpPath))
+		lastNode = tmpPath[-1]
+		if lastNode == end:
+			return tmpPath
+		for nextNode in graph.childrenOf(lastNode): ### ERROR
+			if nextNode not in tmpPath:
+				newPath = tmpPath + [nextNode]
+				pathQueue.append(newPath)
+	return None
+```
+
+**What About a Weighted Shortest Path**?
+* want to minimize the sum of the weights of the edges, not the number of edges
+* DFS can be easily modified to do this 
+* BFS cannot because what we're doing in breadth first search is we're enumerating the paths in length order not in weighted order (not in the sum of the weights)
+
+**Recap**:
+* Graphs are cool
+	* Best way to create a model of many things
+		* capture relationships among objects
+	* Many important problems can be posed as graph optimization problems we already know how to solve
+* Depth-first and breadth-first search are important algorithms
+	* Can be used to solve many problems
+
+**Exercise 3**:
+1. 2
+2. 3 (total number of nodes / 2)
+3. n - 1
+4. n * (n - 1) / 2
+
+**Exercise 4**:
+1. 014
+2. 41
+3. 1
+4. 2014
+5. 201453
+6. 3201
+7. 2/3
+
+**Exercise 5**:
+1. n * (n - 1) / 2
+2. n - 2
+3. (n - 2) * (n - 3)
+4. fact(n - m + 1) / fact(n - m - 1)
+5. fact(n - 2)
+
+**Exercise 6**:
+
+**Exercise 7**:
+
+
+
+------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
+
 
 #### Finding the Shortest Path ####
 
