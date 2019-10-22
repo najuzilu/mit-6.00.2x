@@ -580,7 +580,7 @@ nodes.append(Node("CBA")) # nodes[5]
 
 g = Graph()
 for n in nodes:
-    g.addNode(n)
+	g.addNode(n)
 
 g.addEdge(Edge(nodes[0], nodes[1]))
 g.addEdge(Edge(nodes[0], nodes[2]))
@@ -693,159 +693,26 @@ def BFS(graph, start, end, toPrint = False):
 4. 2014
 5. 201453
 6. 3201
-7. 2/3
+7. 2/3 		*Explanation*: First, realize that the structure of this graph is a set of six nodes, all connected in a circle. Each node has two edges that connect it to adjacent nodes. Given any node, we know that DFS will prioritize the lower-numbered neighbor. Thus, for any destination, we first check for paths along this side. If our destination is our source, we terminate the DFS, and return a path of length zero, which is clearly the shortest. Otherwise, we continue in a circle in one direction. We cannot change direction once we have begun to traverse the circle, as the path may not include any node more than once. It will have found the shortest path for the nodes that are 0, 1, 2, or 3 edges away, but will yield paths of length 4 and 5 for the last two nodes that are, in reality, 2 and 1 edges away, respectively. As it has found the shortest path for 4 nodes, but not for 2, the probability is 4 in 6, or 2/3.
 
 **Exercise 5**:
 1. n * (n - 1) / 2
 2. n - 2
-3. (n - 2) * (n - 3)
-4. fact(n - m + 1) / fact(n - m - 1)
-5. fact(n - 2)
+3. (n - 2) * (n - 3)  		*Explanation*: (n-3) nodes on the first path, (n-2) for every (n-3) node paths, so answer is (n-3) * (n-2)
+4. fact(n - m + 1) / fact(n - m - 1)  		*Explanation*: (n-2) * (n-3) = (n-2)! / (n-4)! for finding paths of length 3. This can be written as: (n - (3 -1))! / (n - (3 + 1))!. So for length m = (n - (m -1))! / (n - (m + 1))! = (n - m + 1)! / (n - m - 1)!
+5. fact(n - 2)  		*Explanation*: see answer from exercise.
 
 **Exercise 6**:
+1. n   		*Explanation*: BFS begins by checking all the paths of length 1. In its worst case, it must check the paths to every node from the source to find the destination. This is at most,  𝑛−1  checks.
+2. False   		*Explanation*: Consider a graph of two nodes, A and B, connected by an edge. You wish to search for a path from A to B. As there is exactly one edge in the graph, and exactly one path from A to B, both run in an equal number of steps.
+3. True   		*Explanation*: As seen in our previous problems in this lecture sequence, BFS checks at most  𝑛−1  paths in KN, and DFS always checks  𝑂((𝑛−2)!)  paths. If given the same node prioritization, both will first find the desired node in the same number of steps.
+4. True   		*Explanation*: While Shortest Path DFS may find the desired node first in this case, it still must explore all other paths before it has determined which path is the fastest. BFS will explore only a fraction of the paths.
+5. True   		*Explanation*: Shortest Path DFS must always explore every path from the source to the destination to ensure that it has found the shortest path. Once BFS has found a path, it knows that it is the shortest, and does not have to explore any other paths.
 
 **Exercise 7**:
-
-
-
-------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------
-
-
-#### Finding the Shortest Path ####
-
-**Depth-first Search (DFS)**:  
-* similar to left-first depth-first method of enumerating a search tree
-* main difference is that graph might have cycles, so we must keep track of what nodes we have visited
-
-```python
-def DFS(graph, start, end, path, shortest):
-	path = path + [start]
-	if start == end:
-		return path
-	for node in graph.childrenOf(start):
-		if node not in path: #avoid cycles
-		if shortest == None:
-			newPath = DFS(graph, node, end, path, shortest, toPrint)
-			if newPath != None:
-				shortest = newPath
-	return shortest
-
-def shortestPath(graph, start, end):
-	return DFS(graph, start, end, [], None)
-```
-
-**Breadth-first Search (BFS)**:  
-```python
-def BFS(graph, start, end, toPrint = False):
-	initPath = [start]
-	pathQueue = [initPath]
-	if toPrint:
-		print('Current BFS path: ', printPath(pathQueue))
-	while len(pathQueue) != 0:
-		tmpPath = pathQueue.pop(0) # get and remove oldest element in pathQueue
-		print('Current BFS path: ', printPath(tmpPath))
-		lastNode = tmpPath[-1]
-		if lastNode = end:
-			return tmpPath
-		for nextNode in graph.childrenOf(lastNode):
-			newPath = tmpPath + [nextNode]
-			pathQueue.append(newPath)
-	return None
-```
-
-##### Exercise 3 #####
-
-1. For questions 1 and 2, consider our previous problem (permutations of 3 students in a line).
-When represented as a tree, each node will have how many children?  
-**Answer**: 
-
-2. Given two permutations, what is the maximum number of swaps it will take to reach one from the other?  
-**Answer**: 3
-
-3. For questions 3 and 4, consider the general case of our previous problem (permutations of n students in a line). Give your answer in terms of n.
-When represented as a tree, each node will have how many children?  
-**Answer**: n-1
-
-4. Given two permutations, what is the maximum number of swaps it will take to reach one from the other?  
-**Answer**: n * (n - 1) / 2
-
-##### Exercise 4 #####
-
-1. Source: 0 Destination: 4
-**Answer**: 014
-
-2. Source: 4 Destination: 1
-**Answer**: 41
-
-3. Source: 1 Destination: 1
-**Answer**: 1
-
-4. Source: 2 Destination: 4
-**Answer**: 2014
-
-5. Source: 2 Destination: 3
-**Answer**: 201453
-
-6. Source: 3 Destination: 1
-**Answer**: 3201
-
-##### Exercise 5 #####
-
-1. How many edges are in **KN**?
-**Answer**: `n * (n-1)/2`
-
-2. Consider the new version of DFS. This traverses paths until all non-circular paths from the source to the destination have been found, and returns the shortest one.
-Let A be the source node, and B be the destination in KN. How many paths of length 2 exist from A to B?
-**Answer**: `n-2`
-
-3. How many paths of length 3 exist from A to B?
-**Answer**: `(n-3) * (n-2)`
-
-4. Continuing the logic used above, calculate the number of paths of length  from A to B, where , and write this number as a ratio of factorials.
-**Answer**: `fact(n-m+1) / fact(n-m-1)`
-
-5. **Answer**: `fact(n-2)`
-
-##### Exercise 6 #####
-
-1. What is the asymptotic worst-case runtime of a Breadth First Search on KN? For simplicity, write O(n) as just n, O(n^2) as n^2, etc.
-**Answer**: n
-
-2. BFS will always run faster than DFS.
-**Answer**: False
-
-3. If a BFS and DFS prioritize the same nodes (e.g., both always choose to explore the lower numbered node first), BFS will always run at least as fast as DFS when run on two nodes in KN.
-**Answer**: True
-
-4. If a BFS and Shortest Path DFS prioritize the same nodes (e.g., both always choose to explore the lower numbered node first), BFS will always run at least as fast as Shortest Path DFS when run on two nodes in any connected unweighted graph.
-**Answer**: True
-
-5. Regardless of node priority, BFS will always run at least as fast as Shortest Path DFS on two nodes in any connected unweighted graph.
-**Answer**: True
-
-##### Exercise 7 #####
-
 1. Consider once again our permutations of students in a line. Recall the nodes in the graph represent permutations, and that the edges represent swaps of adjacent students. We want to design a weighted graph, weighting edges higher for moves that are harder to make. Which of these could be easily implemented by simply assigning weights to the edges already in the graph?
 **Answer**: A) A large student who is difficult to move around in line. B) A sticky spot on the floor which is difficult to move onto and off of.
-
-2. Write a WeightedEdge class that extends Edge. Its constructor requires a weight parameter, as well as the parameters from Edge. You should additionally include a getWeight method. The string value of a WeightedEdge from node A to B with a weight of 3 should be "A->B (3)".
-**Answer**: 
+2. 
 ```python
 class WeightedEdge(Edge):
 	def __init__(self, src, dest, weight):
@@ -856,5 +723,5 @@ class WeightedEdge(Edge):
 		return self.weight
 
 	def __str__(self):
-		return '{}->{} ({})'.format(self.src.getName(), self.dest.getName(), self.weight)
+		return  self.src.getName() + '->' + self.dest.getName() + ' (' + str(self.weight) + ')'
 ```
