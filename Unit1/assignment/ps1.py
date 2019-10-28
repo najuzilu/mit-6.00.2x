@@ -101,8 +101,27 @@ def brute_force_cow_transport(cows,limit=10):
 	transported on a particular trip and the overall list containing all the
 	trips
 	"""
-	# TODO: Your code here
-	pass
+	minNumberTrips = float("inf")
+	result = []
+
+	for partition in (get_partitions(cows)):
+		transport = []
+
+		dummy = False
+
+		for item in partition:
+			listLimit = sum(cows[cow] for cow in item)
+			if listLimit <= limit:
+				transport.append(item)
+			else:
+				dummy = True
+				break
+
+		if not dummy:
+			if len(transport) < minNumberTrips:
+				minNumberTrips = len(transport)
+				result = transport
+	return result
 
 		
 # Problem 3
@@ -132,22 +151,6 @@ lines to print the result of your problem.
 cows = load_cows("ps1_cow_data.txt")
 limit = 100
 
-
-# ''' Test Cases '''
-# print('TEST 1\n')
-# print(greedy_cow_transport({'MooMoo': 85, 'Horns': 50, 'Milkshake': 75, 'Lotus': 10, 'Muscles': 65, 'Louis': 45, 'Miss Bella': 15, 'Patches': 60, 'Polaris': 20, 'Clover': 5}, limit))
-# print('asnwer test 1:\n')
-# print([['MooMoo', 'Lotus'], ['Milkshake', 'Polaris'], ['Muscles', 'Polaris', 'Lotus'], ['Patches', 'Polaris', 'Miss Bella'], ['Horns', 'Louis']])
-
-# print('\n\nTEST 2\n')
-# print(greedy_cow_transport({'Lilly': 24, 'Betsy': 65, 'Abby': 38, 'Daisy': 50, 'Buttercup': 72, 'Dottie': 85, 'Willow': 35, 'Coco': 10, 'Patches': 12, 'Rose': 50}, 100))
-# print('asnwer test 2:\n')
-# print([['Dottie', 'Patches'], ['Buttercup', 'Lilly'], ['Betsy', 'Willow'], ['Daisy', 'Rose'], ['Abby', 'Coco']])
-
-# print('\n\nTEST 3\n')
-# print(greedy_cow_transport({'Betsy': 39, 'Abby': 28, 'Luna': 41, 'Buttercup': 11, 'Willow': 59, 'Coco': 59, 'Starlight': 54, 'Rose': 42}, 120))
-# print('answer test 3:\n')
-# print([['Willow', 'Coco'], ['Starlight', 'Rose', 'Buttercup'], ['Luna', 'Betsy', 'Abby']])
 
 
 
