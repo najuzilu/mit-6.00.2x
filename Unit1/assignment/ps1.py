@@ -125,7 +125,7 @@ def brute_force_cow_transport(cows,limit=10):
 
 		
 # Problem 3
-def compare_cow_transport_algorithms():
+def compare_cow_transport_algorithms(cows):
 	"""
 	Using the data from ps1_cow_data.txt and the specified weight limit, run your
 	greedy_cow_transport and brute_force_cow_transport functions here. Use the
@@ -138,8 +138,16 @@ def compare_cow_transport_algorithms():
 	Returns:
 	Does not return anything.
 	"""
-	# TODO: Your code here
-	pass
+	start1 = time.time()
+	greedy_cow_transport(cows)
+	end1 = time.time()
+	print("Greedy Implementation: ", '{:.10f}'.format((end1 - start1)))
+
+	start2 = time.time()
+	brute_force_cow_transport(cows)
+	end2 = time.time()
+	print("Brute Force Implementation: ",'{:.10f}'.format((end2 - start2)))
+	return
 
 
 """
@@ -151,6 +159,7 @@ lines to print the result of your problem.
 cows = load_cows("ps1_cow_data.txt")
 limit = 100
 
+compare_cow_transport_algorithms(cows)
 
 
 

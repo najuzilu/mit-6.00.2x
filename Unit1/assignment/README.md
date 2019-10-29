@@ -96,7 +96,7 @@ Before doing the task in this part, answer the following question to see your in
 
 **Part 3-1**:
 Now that you have run your benchmarks, which algorithm runs faster?  
-**Answer**: 
+**Answer**: The Greedy Transport Algorithm
 
 **Part 3-2**:
 Consider the properties of the GREEDY algorithm. Will it return the optimal solution?  
