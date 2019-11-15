@@ -1,6 +1,6 @@
-## Unit 2 ##
+# Unit 2 #
 
-#### Lecture 4 - Plotting ####
+## Lecture 4 - Plotting ##
 ```python
 import pylab as plt
 
@@ -109,7 +109,7 @@ Changing scales:
 plt.yscale('log')
 ```
 
-##### An Example: Compound Interest #####
+#### An Example: Compound Interest ####
 
 ```python
 def retire(monthly, rate, terms):
@@ -174,7 +174,7 @@ def displayRetireWMonthsAndRates(monthlies, rates, terms):
 displayRetireWMonthsAndRates([500,700,900,1100],[.03,.05,.07], 40*12)
 ```
 
-#### Stochastic Thinking #####
+### Stochastic Thinking ###
 
 Newtonian mechanics:
 * every effect has a cause
@@ -235,7 +235,7 @@ def testRoll(n = 10):
 	print(result)
 ```
 
-##### Exercise 1 #####
+#### Exercise 1 ####
 For the following explanations of different types of programmatic models, fill in the blank with the appropriate model the definition describes.
 
 1. A _deterministic_ model is one whose behavior is entirely predictable. Every set of variable states is uniquely determined by parameters in the model and by sets of previous states of these variables. Therefore, these models perform the same way for a given set of initial conditions, and it is possible to predict precisely what will happen.
@@ -266,7 +266,7 @@ For the following explanations of different types of programmatic models, fill i
 3. Which modelling system would be best to model a bank account?  
 **Answer**: Either discrete or continuous would work, depending on the specifics of the model you wish to use.
 
-##### Exercise 2 #####
+#### Exercise 2 ####
 
 This problem asks you to write a short function that uses the the random module. Click on the above link to be taken to the Python docs on the random module, where you can see all sorts of cool functions the module provides.
 
@@ -293,7 +293,7 @@ def genEven():
 
 	return randInt
 ```
-##### Exercise 3.1 #####
+#### Exercise 3.1 ####
 Write a deterministic program, deterministicNumber, that returns an even number between 9 and 21.
 ```python
 import random
@@ -306,7 +306,7 @@ def deterministicNumber():
 			return i
 ```
 
-##### Exercise 3.2 #####
+#### Exercise 3.2 ####
 Write a uniformly distributed stochastic program, stochasticNumber, that returns an even number between 9 and 21.
 ```python
 import random
@@ -321,7 +321,7 @@ def stochasticNumber():
 
 	return randInt
 ```
-##### Exercise 4 #####
+#### Exercise 4 ####
 
 1. Are the following two distributions equivalent?
 ```python
@@ -359,7 +359,7 @@ def dist6():
 ```
 **Answer**: No
 
-##### Probabilities #####
+### Probabilities ###
 
 Probability of various results:
 * Consider `testRoll(5)`
@@ -440,7 +440,7 @@ print('Frequency of rolling double 6 =', str(fracBoxCars(1000000) * 100) + '%')
 * Moral 2: One should not confuse the sample probability with the actual probability
 * Moral 3: There was really no need to do this by simulation, since there is a perfectly good closed form answer. We will see many examples where this is not true.
 
-##### Exercise 5 #####
+#### Exercise 5 ####
 
 In this problem, we're going to calculate some probabilities of dice rolls. Imagine you have two fair four-sided dice (if you've never seen one, here's a picture. The result, a number between 1 and 4, is displayed at the top of the die on each of the 3 visible sides). 'Fair' here means that there is equal probability of rolling any of the four numbers.
 
@@ -482,7 +482,7 @@ The following problems will ask for the probability that a given event occurs.
 10. Assume we roll 2 four sided dice. What is P({neither roll is equal to 4})? Answer in reduced fraction form - eg 1/5 instead of 2/10.  
 **Answer**: 9/16
 
-##### Exercise 6 #####
+#### Exercise 6 ####
 
 In this problem, we're going to calculate some various probabilities.
 
@@ -538,7 +538,7 @@ In this problem, we're going to calculate some various probabilities.
 **Answer**: 1/4
 
 
-##### Exercise 7 #####
+#### Exercise 7 ####
 
 You pick three balls in succession out of a bucket of 3 red balls and 3 green balls. Assume replacement after picking out each ball. What is the probability of each of the following events?
 
@@ -557,7 +557,7 @@ You pick three balls in succession out of a bucket of 3 red balls and 3 green ba
 5. You have a bucket with 3 red balls and 3 green balls. This time, assume you _don't_ replace the ball after taking it out. What is the probability of drawing 3 balls of the same color? Answer in reduced fraction form - eg 1/5 instead of 2/10.  
 **Answer**: 2 * 3/6 * 2/5 * 1/4 = 2* 1/2 * 2/5 * 1/4 = 2* 1/5 * 1/4 = 2* 1/20 = 2/20 = 1/10 #Prob of picking three balls of the color red. The prob of picking 3 balls of the same color is P{G,G,G} + P(R,R,R) = 1/20 + 1/20 = 2/20 = 1/10
 
-##### Random Walks #####
+### Random Walks ###
 
 **Simulation Models**:
 * A description of computations that provide useful information about the possible behaviors of the system being modeled.
@@ -586,3 +586,424 @@ Why Random Walks?
 	* each step is parallel to either the x-axis or the y-axis
 * with a prob of .25, he'll be 0 units away. With a prob of .25 he'll be 2 units away. With a prob of .5 he'll be sqrt(2) units away (due to Pythagorean theorem).
 * .25 * 0 + .25 * 2 + .5 * sqrt(2) = 1.2
+
+## Random Walks ##
+
+### Location, Field, and Drunk ####
+* Simulated, by hand, a walk in last lecture
+* Process too labor intensive to be practical for more than a few steps
+* But we can write a program to simulate lots of steps
+
+**Structure of Simulation**:
+* Simulate one walk of k steps
+* Simulate n such walks
+* Report average distance from origin
+
+Some userful abstractions:
+* Location - a place
+* Field - a collection of places and drunks
+* Drunk - somebody wanders from place to place in a field
+
+```python
+class Location(object):
+	def __init__(self, x, y):
+		""" x and y are floats """
+		self.x = x
+		self.y = y
+
+	def move(self, deltaX, deltaY):
+		""" deltaX and deltaY are floats """
+		return Location(self.x + deltaX, self.y + deltaY)
+
+	def getX(self):
+		return self.x
+
+	def getY(self):
+		return self.y
+
+	def distFrom(self, other):
+		ox = other.x
+		oy = other.y
+		xDist = self.x - ox
+		yDist = self.y - oy
+		return (xDist**2 + yDist**2)**0.5
+
+	def __str__(self):
+		return '<' + str(self.x) + ', ' + str(self.y) + '>'
+
+class Field(object):
+	def __init__(self):
+		self.drunks = {}
+
+	def addDrunk(self, drunk, loc):
+		if drunk in self.drunks:
+			raise ValueError('Duplicate drunk')
+		else:
+			self.drunks[drunk] = loc
+
+	def getLoc(self, drunk):
+		if drunk not in self.drunks:
+			raise ValueError('Drunk not in field')
+		return self.drunks[drunk]
+
+	def moveDrunk(self, drunk):
+		if drunk not in self.drunks:
+			raise ValueError('Drunk not in field')
+		xDist, yDist = drunk.takeStep()
+		currentLocation = self.drunks[drunk]
+		# use move method of Location to get new location
+		self.drunks[drunk] = currentLocation.move(xDist, yDist)
+
+""" Basic because we will use to create two subclasses that inherit this one.
+	Two subclasses of drunk are:
+		1. The "usual" drunk, who wanders around at random
+		2. The "I hate winter" drunk, who tries to move southward
+"""
+class Drunk(object):
+	def __init__(self, name):
+		self.name = name
+
+	def __str__(self):
+		return 'This drunk is named ' + self.name
+
+class UsualDrunk(Drunk):
+	def takeStep(self):
+		stepChoices = [(0.0, 1.0), (0.0, -1.0), (1.0,0.0), (-1.0,0.0)]
+		return random.choice(stepChoices)
+
+class ColdDrunk(Drunk):
+	def takeStep(self):
+		stepChoices = [(0.0, 0.9),(0.0,-1.1),(1.0, 0.0),(-1.0,0.0)] # heads north, slightly less than one unit, and heads south, slightly more than one unit >> think of this as a biased walk
+		return random.choice(stepChoices)
+```
+
+### Simulating a Walk ###
+
+```python
+""" Simulate a single walk """
+def walk(f, d, numSteps):
+	""" Assumes: f a Field, d a Drunk in f, and numSteps an int >= 0.
+		Moves d numSteps times; returns the distance between the final 
+		location and the location at the start of the walk.
+	"""
+	start = f.getLoc(d)
+	for s in range(numSteps):
+		f.moveDrunk(d)
+	return start.distFrom(f.getLoc(d))
+
+""" Simulate multiple walks """
+def simWalks(numSteps, numTrials, dClass, name):
+	"""	Assumes numSteps an int >= 0, numTrials an int > 0, dClass a subclass of Drunk
+		Simulates numTrials walk of numSteps steps each. Returns a list of the final distances
+		for each trial.
+	"""
+	Homer = dClass(name)
+	origin = Location(0, 0)
+	distances = []
+	for t in range(numTrials):
+		f = Field()
+		f.addDrunk(Homer, origin)
+		distances.append(round(walk(f, Homer, numSteps), 1))
+	return distances
+
+def drunkTest(walkLengths, numTrials, dClass, name):
+	"""	Assumes walkLengths a sequence of ints >= 0
+			numTrials an int > 0
+			dClass a subclass of Drunk
+		For each number of steps in walkLengths,
+			runs simWalks with numTrials walks and 
+			prints results
+	"""
+	for numStep in walkLengths:
+		distances = simWalks(numStep, numTrials, dClass, name)
+		print(dClass.__name__, ' random walk of ', numStep, ' steps')
+		print('Mean =', round(sum(distances)/len(distances), 4))
+		print('Max =', max(distances), ' Min =', min(distances))
+```
+
+**Let's Try a Sanity Check**
+* Try on cases where we think we know the anaswer
+	* A very important precaution!
+
+#### Exercise 1 ####
+1. Would placing the drunk's starting location not at the origin change the distances returned?  
+**Answer**: No
+
+2. If so, what line would you modify to compensate? Enter the line number (eg 17). If not, just type None.  
+```python
+def simWalks(numSteps, numTrials, dClass):
+	homer = UsualDrunk()
+	notOrigin = Location(1, 0)
+	distances = []
+	for t in range(numTrials):
+		f = Field()
+		f.addDrunk(homer, notOrigin)
+		distances.append(round(walk(f, homer, numSteps), 1))
+	return distances
+```
+**Answer**: None
+
+3. If you were going to use random.seed in a real-life simulation instead of just when you are debugging a simulation, would you want to seed it with 0?  
+**Answer**: No
+
+#### Exercise 2 ####
+
+1. Is the following code deterministic or stochastic?
+```python
+import random
+mylist = []
+
+def main():
+    myList = []
+    for i in range(random.randint(1,10)):
+        random.seed(0)
+        if random.randint(1, 10) > 3:
+            number = random.randint(1,10)
+            myList.append(number)
+    return myList
+```
+**Answer**: Stochastic
+
+2. Which of the following alterations (Code Sample A or Code Sample B) would result in a deterministic process?
+```python
+import random
+
+# Code Sample A
+mylist = []
+
+for i in range(random.randint(1, 10)):
+    random.seed(0)
+    if random.randint(1, 10) > 3:
+        number = random.randint(1, 10)
+        if number not in mylist:
+            mylist.append(number)
+print(mylist)
+
+# Code Sample B
+mylist = []
+
+random.seed(0)
+for i in range(random.randint(1, 10)):
+    if random.randint(1, 10) > 3:
+        number = random.randint(1, 10)
+        mylist.append(number)
+    print(mylist)
+```
+**Answer**: Code Sample A AND Code Sample B
+
+### Random Walks and More Plotting ###
+
+```python
+# Iterating over styles
+class styleIterator(object):
+	def __init__(self, styles):
+		self.index = 0
+		self.styles = styles
+
+	def nextStyle(self):
+		result = self.styles[self.index]
+		if self.index == len(self.styles) - 1:
+			self.index = 0
+		else:
+			self.index += 1
+		return result
+
+def simDrunk(numTrials, dClass, walkLengths):
+	meanDistances = []
+	for numSteps in walkLengths:
+		print('starting simulation of', numSteps, 'steps')
+		trials = simWalks(numSteps, numTrials, dClass)
+		mean = sum(trials)/len(trials)
+		meanDistances.append(mean)
+	return meanDistances
+
+def simAll(drunkKinds, walkLengths, numTrials):
+	styleChoice = styleIterator(('m-','b--', 'g-.'))
+	for dClass in drunkKinds:
+		curStyle = styleChoice.nextStyle()
+		print('Starting simulation of', dClass.__name__)
+		means = simDrunk(numTrials, dClass, walkLengths)
+		pylab.plot(walkLengths, means, curStyle, label = dClass.__name__)
+	pylab.title('Mean Distance from Origin (' + str(numTrials) + ' trials)')
+	pylab.xlabel('Number of Steps')
+	pylab.ylabel('Distance from Origin')
+	pylab.legend(loc = 'best')
+
+# Getting Ends of Multiple Walks
+def getFinalLocs(numSteps, numTrials, dClass):
+	locs = []
+	d = dClass()
+	for t in range(numTrials):
+		f = Field()
+		f.addDrunk(d, Location(0,0))
+		for s in range(numSteps):
+			f.moveDrunk(d)
+		locs.append(f.getLoc(d))
+	return locs
+# Plotting Ending Locations
+def plotLocs(drunkKinds, numSteps, numTrials):
+	styleChoice = styleIterator(('k+', 'r^', 'mo'))
+	for dClass in drunkKinds:
+		locs = getFinalLocs(numSteps, numTrials, dClass)
+		xVals, yVals = [], []
+		for loc in locs:
+			xVals.append(loc.getX())
+			yVal.append(loc.getY())
+		xVals = pylab.array(xValsx)
+		yVals = pylab.array(yVals)
+		meanX = sum(abs(xVals))/len(xVals)
+		meanY = sum(abs(yVals))/len(yVals)
+		curStyle = styleChoice.nextStyle()
+		pylab.plot(xVals, yVals, curStyle, label = dClass.__name__ + ' mean abs dist = <' + str(meanX) + ', ' + str(meanY) + '>')
+	pylab.title('Location at End of Walks (' + str(numSteps) + ' trials)')
+	pylab.xlabel('Steps East/West of Origin')
+	pylab.ylabel('Steps North/South of Origin')
+	pylab.ylim(-1000,1000)
+	pylab.xlim(-1000,1000)
+	pylab.legend(loc = 'upper left')
+```
+
+**Fields with Wormholes** - Einstein-Rosen Bridge:
+```python
+class OddField(Field):
+	def __init__(self, numHoles = 1000, xRange = 100, yRange = 100):
+		Field.__init__(self)
+		self.wormholes = {}
+		for w in range(numHoles):
+			x = random.randint(-xRange, xRange)
+			y = random.randint(-yRange, yRange)
+			newX = random.randint(-xRange, xRange)
+			newY = random.randint(-yRange, yRange)
+			newLoc = Location(newX, newY)
+			self.wormholes[(x,y)] = newLoc
+
+	def moveDrunk(self, drunk):
+		Field.moveDrunk(self, drunk)
+		x = self.drunks[drunk].getX()
+		y = self.drunks[drunk].getY()
+		if (x,y) in self.wormholes:
+			self.drunks[drunk] = self.wormholes[(x, y)]
+
+# Tracing a Walk
+def traceWalk(fieldKinds, numSteps):
+	styleChoice = styleIterator(('b+', 'r^', 'ko'))
+	for fClass in fieldKinds:
+		d = UsualDrunk()
+		f = fClass()
+		f.addDrunk(d, Location(0,0))
+		locs = []
+		for s in range(numSteps):
+			f.moveDrunk(d)
+			locs.append(f.getLoc(d))
+		xVals, yVals = [], []
+		for loc in locs:
+			xVals.append(loc.getX())
+			yVals.append(loc.getY())
+		curStyle = styleChoice.nextStyle()
+		pylab.plot(xVals, yVals, curStyle, label = fClass.__name__)
+	pylab.title('Spots Visited on Walk (' + str(numSteps) + ' steps)')
+	pylab.xlabel('Steps East/West of Origin')
+	pylab.ylabel('Steps North/South of Origin')
+	pylab.legend(loc = 'best')
+```
+
+**Summary**:
+* Point is not the simulations themselves, but how we built them
+* Three classes corresponding to domain-specific types
+	* Location
+	* Field
+	* Drunk
+* Functions corresponding to:
+	* One trial
+	* Multiple trials
+	* Result reporting
+* Created two subclasses of Drunk
+* Simulation had an argument of type class, so we could easily investigate both classes of Drunk
+* Made series of incremental changes to simulation so that we could investigate different questions
+	* Get simple version working first
+	* Elaborate a step at a time
+* Introduced a weird subclass of Field
+	* Easy to add to simulation
+	* Would have been hard to model analytically
+
+#### Exercise 3 ####
+
+1. The output of random.randint(1, 10) after a specific seed is shown below.
+```python
+>>> import random
+>>> random.seed(9001)
+>>> random.randint(1, 10)
+1
+>>> random.randint(1, 10)
+3
+>>> random.randint(1, 10)
+6
+>>> random.randint(1, 10)
+6
+>>> random.randint(1, 10)
+7
+```
+We would like you to solve this problem using just the above output, without using the interpreter. (Note that the actual output you get when you run the above commands is actually going to be 1, 5, 5, 2, 10) What is printed in the following programs? Separate new lines with commas - so the above output would be 1, 3, 6, 6, 7.
+```python
+random.seed(9001)
+for i in range(random.randint(1, 10)):
+    print(random.randint(1, 10))
+```
+**Answer**: 3
+
+2. 
+```python
+random.seed(9001)
+d = random.randint(1, 10)
+for i in range(random.randint(1, 10)):
+    print(d)
+```
+**Answer**: 1, 1, 1
+
+3. 
+```python
+random.seed(9001)
+d = random.randint(1, 10)
+for i in range(random.randint(1, 10)):
+    if random.randint(1, 10) < 7:
+        print(d)
+    else:
+        random.seed(9001)
+        d = random.randint(1, 10)
+        print(random.randint(1, 10))
+```
+**Answer**: 1, 1, 3
+
+#### Exercise 4 ####
+
+1. Suppose we wanted to create a class PolarBearDrunk, a drunk polar bear who moves randomly along the x and y axes taking large steps when moving South, and small steps when moving North.
+```python
+class PolarBearDrunk(Drunk):
+    def takeStep(self):
+        # code for takeStep()
+```
+Which of the following would be an appropriate implementation of takeStep()?
+* Option A
+```python
+directionList = [(0.0, 1.0), (1.0, 0.0), (-1.0, 0.0), (0.0, -1.0)]
+myDirection = random.choice(directionList)
+if myDirection[0] == 0.0:
+    return myDirection + (0.0, -0.5)
+return myDirection
+```
+* Option B
+```python
+directionList = [(0.0, 0.5), (1.0, -0.5), (-1.0, -0.5), (0.0, -1.5)]
+return random.choice(directionList)
+```
+* Option C
+```python
+directionList = [(0.0, 0.5), (1.0, 0.0), (-1.0, 0.0), (0.0, -1.5)]
+return random.choice(directionList)
+```
+* Option D
+```python
+directionList = [(0.0, 1.0), (1.0, 0.0), (-1.0, 0.0), (0.0, -1.0), (0.0, -1.0)]
+return random.choice(directionList)
+```
+**Answer**: C
