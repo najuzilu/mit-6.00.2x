@@ -53,8 +53,8 @@ class Position(object):
 		old_x, old_y = self.getX(), self.getY()
 		angle = float(angle)
 		# Compute the change in position
-		delta_y = speed * math.cos(math.radians(angle))
-		delta_x = speed * math.sin(math.radians(angle))
+		delta_y = speed * math.sin(math.radians(angle)) # fixed
+		delta_x = speed * math.cos(math.radians(angle)) # fixed
 		# Add that to the existing position
 		new_x = old_x + delta_x
 		new_y = old_y + delta_y
@@ -179,7 +179,7 @@ class Robot(object):
 		self.room = room
         self.speed = speed
         self.position = room.getRandomPosition()
-        self.angle = random.randint(0, 360)
+        self.angle = random.randint(0, 359)
         room.cleanTileAtPosition(self.position)
 
 	def getRobotPosition(self):
@@ -250,7 +250,12 @@ class StandardRobot(Robot):
 		Move the robot to a new position and mark the tile it is on as having
 		been cleaned.
 		"""
-		raise NotImplementedError
+		position = self.position.getNewPosition(self.angle, self.speed)
+		while not self.room.isPositionInRoom(position):
+			self.angle = random.randint(0, 359)
+			position = position.getNewPosition(self.angle, self.speed)
+		self.position = position
+		self.room.cleanTileAtPosition(self.position)
 
 
 # Uncomment this line to see your implementation of StandardRobot in action!
