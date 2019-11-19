@@ -179,7 +179,7 @@ class Robot(object):
 		self.room = room
         self.speed = speed
         self.position = room.getRandomPosition()
-        self.angle = random.randint(0, 359)
+        self.angle = random.randint(0, 360)
         room.cleanTileAtPosition(self.position)
 
 	def getRobotPosition(self):
@@ -252,7 +252,7 @@ class StandardRobot(Robot):
 		"""
 		position = self.position.getNewPosition(self.angle, self.speed)
 		while not self.room.isPositionInRoom(position):
-			self.angle = random.randint(0, 359)
+			self.angle = random.randint(0, 360)
 			position = position.getNewPosition(self.angle, self.speed)
 		self.position = position
 		self.room.cleanTileAtPosition(self.position)
@@ -311,7 +311,15 @@ class RandomWalkRobot(Robot):
 		Move the robot to a new position and mark the tile it is on as having
 		been cleaned.
 		"""
-		raise NotImplementedError
+		self.angle = random.randint(0, 360)
+		position = self.position.getNewPosition(self.angle, self.speed)
+
+		while not self.room.isPositionInRoom(position):
+			self.angle = random.randint(0, 360)
+			position = position.getNewPosition(self.angle, self.speed)
+
+		self.position = position
+		self.room.cleanTileAtPosition(self.position)
 
 
 def showPlot1(title, x_label, y_label):

@@ -79,12 +79,12 @@ class RectangularRoom(object):
 		"""
 		Returns a random position inside the room
 		"""
-		# randX = random.randint(0, self.width - 1)
-		# randY = random.randint(0, self.height - 1)
-		randX = self.width * random.random()
-		randY = self.height * random.random()
-		# return Position(math.floor(randX), math.floor(randY))
-		return Position(randX, randY)
+		randX = random.randint(0, self.width - 1)
+		randY = random.randint(0, self.height - 1)
+		return Position(math.floor(randX), math.floor(randY))
+		# randX = self.width * random.random()
+		# randY = self.height * random.random()
+		# return Position(randX, randY)
 
 	def isPositionInRoom(self, pos):
 		"""
@@ -142,44 +142,82 @@ def runSimulation(num_robots, speed, width, height, min_coverage, num_trials, ro
 		robots = [robot_type(room, speed) for _ in range(num_robots)]
 		tilesToClean = math.ceil(min_coverage * room.getNumTiles())
 		while (robots[0].room.getNumCleanedTiles() < tilesToClean):
+			anim.update(room, robots)
 			for rbt in robots:
 				rbt.updatePositionAndClean()
 			counter += 1
 		all_simulations.append(counter)
+	anim.done()
 	return sum(all_simulations) / len(all_simulations)
 
+class RandomWalkRobot(Robot):
+
+	def updatePositionAndClean(self):
+		self.angle = random.randint(0, 360)
+		position = self.position.getNewPosition(self.angle, self.speed)
+
+		while not self.room.isPositionInRoom(position):
+			self.angle = random.randint(0, 360)
+			position = position.getNewPosition(self.angle, self.speed)
+
+		self.position = position
+		self.room.cleanTileAtPosition(self.position)
 
 
+def showPlot1(title, x_label, y_label):
+	"""
+	What information does the plot produced by this function tell you?
+	"""
+	num_robot_range = range(1, 11)
+	times1 = []
+	times2 = []
+	for num_robots in num_robot_range:
+		print("Plotting", num_robots, "robots...")
+		times1.append(runSimulation(num_robots, 1.0, 20, 20, 0.8, 20, StandardRobot))
+		times2.append(runSimulation(num_robots, 1.0, 20, 20, 0.8, 20, RandomWalkRobot))
+	pylab.plot(num_robot_range, times1)
+	pylab.plot(num_robot_range, times2)
+	pylab.title(title)
+	pylab.legend(('StandardRobot', 'RandomWalkRobot'))
+	pylab.xlabel(x_label)
+	pylab.ylabel(y_label)
+	pylab.show()
 
-# print("Testing 1 robot at 1.0 speed cleaning 50% of a 20x20 room")
-# print(runSimulation(1, 1.0, 5, 5, .5, 1000, StandardRobot))
-
-# print("Testing 1 robot at 1.0 speed cleaning 100% of a 20x20 room")
-# print(runSimulation(1, 1.0, 10, 12, 1, 1000, StandardRobot)) # my output=116; correct=115
 	
-# print("Testing 3 robot at 1.0 speed cleaning 50% of a 20x20 room")
-# print(runSimulation(3, 1.0, 5, 5, .5, 1000, StandardRobot))
+def showPlot2(title, x_label, y_label):
+	"""
+	What information does the plot produced by this function tell you?
+	"""
+	aspect_ratios = []
+	times1 = []
+	times2 = []
+	for width in [10, 20, 25, 50]:
+		height = 300//width
+		print("Plotting cleaning time for a room of width:", width, "by height:", height)
+		aspect_ratios.append(float(width) / height)
+		times1.append(runSimulation(2, 1.0, width, height, 0.8, 200, StandardRobot))
+		times2.append(runSimulation(2, 1.0, width, height, 0.8, 200, RandomWalkRobot))
+	pylab.plot(aspect_ratios, times1)
+	pylab.plot(aspect_ratios, times2)
+	pylab.title(title)
+	pylab.legend(('StandardRobot', 'RandomWalkRobot'))
+	pylab.xlabel(x_label)
+	pylab.ylabel(y_label)
+	pylab.show()
 
-# print("Testing 3 robot at 1.0 speed cleaning 100% of a 20x20 room")
-# print(runSimulation(3, 1.0, 10, 12, 1, 1000, StandardRobot)) # my output=116; correct=115
+if __name__ == '__main__':
+	num_robots = 3
+	speed = 1.0
+	width = 5
+	height = 5
+	percentCleaned = 0.7
+	trials = 1
+	delay = 0.6
 
-print('Testing 1 robot with 1.0 speed, cleaning 20-100% of 5x5 room')
-print(runSimulation(1, 1.0, 5, 5, 0.2, 1000, StandardRobot))
-print(runSimulation(1, 1.0, 5, 5, 0.4, 1000, StandardRobot))
-print(runSimulation(1, 1.0, 5, 5, 0.6, 1000, StandardRobot))
-print(runSimulation(1, 1.0, 5, 5, 0.8, 1000, StandardRobot))
-print(runSimulation(1, 1.0, 5, 5, 1, 1000, StandardRobot))
+	# global anim
+	# #anim = ps2_visualize.RobotVisualization(num_robots, width, height)
+	# anim = ps2_visualize.RobotVisualization(num_robots, width, height, delay)
+	# avg = runSimulation(num_robots, speed, width, height, percentCleaned, trials, StandardRobot)
 
-print('\nTesting 3 robot with 1.0 speed, cleaning 20-100% of 5x5 room')
-print(runSimulation(3, 1.0, 5, 5, 0.2, 1000, StandardRobot))
-print(runSimulation(3, 1.0, 5, 5, 0.4, 1000, StandardRobot))
-print(runSimulation(3, 1.0, 5, 5, 0.6, 1000, StandardRobot))
-print(runSimulation(3, 1.0, 5, 5, 0.8, 1000, StandardRobot))
-print(runSimulation(3, 1.0, 5, 5, 1, 10000, StandardRobot))
-
-print('\nTesting 3 robot with 4.0 speed, cleaning 20-100% of 5x5 room')
-print(runSimulation(3, 4.0, 5, 5, 0.2, 1000, StandardRobot))
-print(runSimulation(3, 4.0, 5, 5, 0.4, 1000, StandardRobot))
-print(runSimulation(3, 4.0, 5, 5, 0.6, 1000, StandardRobot))
-print(runSimulation(3, 4.0, 5, 5, 0.8, 1000, StandardRobot))
-print(runSimulation(3, 4.0, 5, 5, 1, 10000, StandardRobot))
+testRobotMovement(RandomWalkRobot, RectangularRoom)
+# testRobotMovement(StandardRobot, RectangularRoom)

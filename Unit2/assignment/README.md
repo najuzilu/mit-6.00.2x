@@ -1,6 +1,5 @@
 ## Problem Set #2 ## 
 
-
 ###Simulation Overview###
 iRobot is a company (started by MIT alumni and faculty) that sells the Roomba vacuuming robot (watch one of the product videos to see these robots in action). Roomba robots move around the floor, cleaning the area they pass over.
 
@@ -64,7 +63,7 @@ Although this problem has many parts, it should not take long once you have chos
 
 **Hint**: During debugging, you might want to use random.seed(0) so that your results are reproducible.
 
-####Problem 2: Robot Class####
+###Problem 2: Robot Class###
 In ps2.py we provided you with the Robot class, which stores the position and direction of a robot. For this class, decide what fields you will use and decide how the following operations are to be performed:
 * Initializing the object
 * Accessing the robot's position
@@ -82,7 +81,7 @@ Although this problem has many parts, it should not take long once you have chos
 
 In the final implementation of Robot, not all methods will be implemented. Not to worry -- its subclass(es) will implement the method updatePositionAndClean().
 
-## Problem 3: StandardRobot Class ##
+###Problem 3: StandardRobot Class###
 Each robot must also have some code that tells it how to move about a room, which will go in a method called updatePositionAndClean.
 
 Ordinarily we would consider putting all the robot's methods in a single class. However, later in this problem set we'll consider robots with alternate movement strategies, to be implemented as different classes with the same interface. These classes will have a different implementation of updatePositionAndClean but are for the most part the same as the original robots. Therefore, we'd like to use inheritance to reduce the amount of duplicated code.
@@ -91,7 +90,7 @@ We have already refactored the robot code for you into two classes: the Robot cl
 
 Complete the updatePositionAndClean method of StandardRobot to simulate the motion of the robot after a single time-step (as described on the Simulation Overview page).
 
-## Problem 4: Running the Simulation ##
+###Problem 4: Running the Simulation###
 In this problem you will write code that runs a complete robot simulation.
 
 Recall that in each trial, the objective is to determine how many time-steps are on average needed before a specified fraction of the room has been cleaned. Implement the following function:
@@ -110,3 +109,5 @@ def runSimulation(num_robots, speed, width, height, min_coverage, num_trials,
 The first six parameters should be self-explanatory. For the time being, you should pass in StandardRobot for the robot_type parameter, like so:  
 `avg = runSimulation(10, 1.0, 15, 20, 0.8, 30, StandardRobot)`  
 Then, in runSimulation you should use robot_type(...) instead of StandardRobot(...) whenever you wish to instantiate a robot. (This will allow us to easily adapt the simulation to run with different robot implementations, which you'll encounter in Problem 6.)
+
+###Problem 5: RandomWalkRobot Class###
