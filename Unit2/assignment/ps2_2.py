@@ -79,9 +79,12 @@ class RectangularRoom(object):
 		"""
 		Returns a random position inside the room
 		"""
-		randX = random.randint(0, self.width - 1)
-		randY = random.randint(0, self.height - 1)
-		return Position(math.floor(randX), math.floor(randY))
+		# randX = random.randint(0, self.width - 1)
+		# randY = random.randint(0, self.height - 1)
+		randX = self.width * random.random()
+		randY = self.height * random.random()
+		# return Position(math.floor(randX), math.floor(randY))
+		return Position(randX, randY)
 
 	def isPositionInRoom(self, pos):
 		"""
@@ -96,8 +99,8 @@ class Robot(object):
 		self.room = room
 		self.speed = speed
 		self.position = room.getRandomPosition()
-		self.angle = random.randint(0, 359)
-		room.cleanTileAtPosition(self.position)
+		self.angle = random.randint(0, 360)
+		self.room.cleanTileAtPosition(self.position)
 
 	def getRobotPosition(self):
 		return self.position
@@ -115,17 +118,68 @@ class Robot(object):
 		raise NotImplementedError # don't change this!
 
 class StandardRobot(Robot):
+
 	def updatePositionAndClean(self):
 		position = self.position.getNewPosition(self.angle, self.speed)
+
 		# If position not in room continue calculating until position in room
 		while not self.room.isPositionInRoom(position):
-			self.angle = random.randint(0, 359)
+			self.angle = random.randint(0, 360)
 			position = position.getNewPosition(self.angle, self.speed)
+		
 		self.position = position
 		self.room.cleanTileAtPosition(self.position)
 
-# robot = Robot(RectangularRoom(8,12), 1.0)
-ted = StandardRobot(RectangularRoom(8,12), 1.0)
-ted.updatePositionAndClean()
-# Uncomment this line to see your implementation of StandardRobot in action!
-# testRobotMovement(StandardRobot, RectangularRoom)
+def runSimulation(num_robots, speed, width, height, min_coverage, num_trials, robot_type):
+	"""
+		In each trial, the objective is to determine how many time-steps are on 
+		average needed before a specified fraction of the room has been cleaned?
+	"""
+	all_simulations = []
+	for _ in range(num_trials):
+		counter = 0
+		room = RectangularRoom(width, height)
+		robots = [robot_type(room, speed) for _ in range(num_robots)]
+		tilesToClean = math.ceil(min_coverage * room.getNumTiles())
+		while (robots[0].room.getNumCleanedTiles() < tilesToClean):
+			for rbt in robots:
+				rbt.updatePositionAndClean()
+			counter += 1
+		all_simulations.append(counter)
+	return sum(all_simulations) / len(all_simulations)
+
+
+
+
+# print("Testing 1 robot at 1.0 speed cleaning 50% of a 20x20 room")
+# print(runSimulation(1, 1.0, 5, 5, .5, 1000, StandardRobot))
+
+# print("Testing 1 robot at 1.0 speed cleaning 100% of a 20x20 room")
+# print(runSimulation(1, 1.0, 10, 12, 1, 1000, StandardRobot)) # my output=116; correct=115
+	
+# print("Testing 3 robot at 1.0 speed cleaning 50% of a 20x20 room")
+# print(runSimulation(3, 1.0, 5, 5, .5, 1000, StandardRobot))
+
+# print("Testing 3 robot at 1.0 speed cleaning 100% of a 20x20 room")
+# print(runSimulation(3, 1.0, 10, 12, 1, 1000, StandardRobot)) # my output=116; correct=115
+
+print('Testing 1 robot with 1.0 speed, cleaning 20-100% of 5x5 room')
+print(runSimulation(1, 1.0, 5, 5, 0.2, 1000, StandardRobot))
+print(runSimulation(1, 1.0, 5, 5, 0.4, 1000, StandardRobot))
+print(runSimulation(1, 1.0, 5, 5, 0.6, 1000, StandardRobot))
+print(runSimulation(1, 1.0, 5, 5, 0.8, 1000, StandardRobot))
+print(runSimulation(1, 1.0, 5, 5, 1, 1000, StandardRobot))
+
+print('\nTesting 3 robot with 1.0 speed, cleaning 20-100% of 5x5 room')
+print(runSimulation(3, 1.0, 5, 5, 0.2, 1000, StandardRobot))
+print(runSimulation(3, 1.0, 5, 5, 0.4, 1000, StandardRobot))
+print(runSimulation(3, 1.0, 5, 5, 0.6, 1000, StandardRobot))
+print(runSimulation(3, 1.0, 5, 5, 0.8, 1000, StandardRobot))
+print(runSimulation(3, 1.0, 5, 5, 1, 10000, StandardRobot))
+
+print('\nTesting 3 robot with 4.0 speed, cleaning 20-100% of 5x5 room')
+print(runSimulation(3, 4.0, 5, 5, 0.2, 1000, StandardRobot))
+print(runSimulation(3, 4.0, 5, 5, 0.4, 1000, StandardRobot))
+print(runSimulation(3, 4.0, 5, 5, 0.6, 1000, StandardRobot))
+print(runSimulation(3, 4.0, 5, 5, 0.8, 1000, StandardRobot))
+print(runSimulation(3, 4.0, 5, 5, 1, 10000, StandardRobot))

@@ -90,3 +90,23 @@ Ordinarily we would consider putting all the robot's methods in a single class. 
 We have already refactored the robot code for you into two classes: the Robot class you completed in Problem 2 (which contains general robot code), and a StandardRobot class that inherits from it (which contains its own movement strategy).
 
 Complete the updatePositionAndClean method of StandardRobot to simulate the motion of the robot after a single time-step (as described on the Simulation Overview page).
+
+## Problem 4: Running the Simulation ##
+In this problem you will write code that runs a complete robot simulation.
+
+Recall that in each trial, the objective is to determine how many time-steps are on average needed before a specified fraction of the room has been cleaned. Implement the following function:
+```python
+def runSimulation(num_robots, speed, width, height, min_coverage, num_trials,
+                  robot_type):
+    """
+    Runs NUM_TRIALS trials of the simulation and returns the mean number of
+    time-steps needed to clean the fraction MIN_COVERAGE of the room.
+
+    The simulation is run with NUM_ROBOTS robots of type ROBOT_TYPE, each with
+    speed SPEED, in a room of dimensions WIDTH x HEIGHT.
+    """
+```
+
+The first six parameters should be self-explanatory. For the time being, you should pass in StandardRobot for the robot_type parameter, like so:  
+`avg = runSimulation(10, 1.0, 15, 20, 0.8, 30, StandardRobot)`  
+Then, in runSimulation you should use robot_type(...) instead of StandardRobot(...) whenever you wish to instantiate a robot. (This will allow us to easily adapt the simulation to run with different robot implementations, which you'll encounter in Problem 6.)
