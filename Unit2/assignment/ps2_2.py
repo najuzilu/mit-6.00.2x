@@ -142,12 +142,12 @@ def runSimulation(num_robots, speed, width, height, min_coverage, num_trials, ro
 		robots = [robot_type(room, speed) for _ in range(num_robots)]
 		tilesToClean = math.ceil(min_coverage * room.getNumTiles())
 		while (robots[0].room.getNumCleanedTiles() < tilesToClean):
-			anim.update(room, robots)
+			# anim.update(room, robots)
 			for rbt in robots:
 				rbt.updatePositionAndClean()
 			counter += 1
 		all_simulations.append(counter)
-	anim.done()
+	# anim.done()
 	return sum(all_simulations) / len(all_simulations)
 
 class RandomWalkRobot(Robot):
@@ -163,10 +163,10 @@ class RandomWalkRobot(Robot):
 		self.position = position
 		self.room.cleanTileAtPosition(self.position)
 
-
 def showPlot1(title, x_label, y_label):
 	"""
 	What information does the plot produced by this function tell you?
+	How many time-steps on average are needed to clean 0.8 percent of the room
 	"""
 	num_robot_range = range(1, 11)
 	times1 = []
@@ -187,6 +187,9 @@ def showPlot1(title, x_label, y_label):
 def showPlot2(title, x_label, y_label):
 	"""
 	What information does the plot produced by this function tell you?
+	x - aspect ratio
+	y - step time for 2 robots, 80% of room
+	time it takes two robots to clean 80% of variously sized rooms
 	"""
 	aspect_ratios = []
 	times1 = []
@@ -215,9 +218,10 @@ if __name__ == '__main__':
 	delay = 0.6
 
 	# global anim
-	# #anim = ps2_visualize.RobotVisualization(num_robots, width, height)
+	# anim = ps2_visualize.RobotVisualization(num_robots, width, height)
 	# anim = ps2_visualize.RobotVisualization(num_robots, width, height, delay)
 	# avg = runSimulation(num_robots, speed, width, height, percentCleaned, trials, StandardRobot)
 
-testRobotMovement(RandomWalkRobot, RectangularRoom)
+
+# testRobotMovement(RandomWalkRobot, RectangularRoom)
 # testRobotMovement(StandardRobot, RectangularRoom)
