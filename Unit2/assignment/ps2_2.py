@@ -70,21 +70,16 @@ class RectangularRoom(object):
 		"""
 		count = 0
 		for row in self.tiles:
-			for tile in row:
-				if tile:
-					count += 1
+			count += sum(row)
 		return count
 
 	def getRandomPosition(self):
 		"""
 		Returns a random position inside the room
 		"""
-		randX = random.randint(0, self.width - 1)
-		randY = random.randint(0, self.height - 1)
-		return Position(math.floor(randX), math.floor(randY))
-		# randX = self.width * random.random()
-		# randY = self.height * random.random()
-		# return Position(randX, randY)
+		randX = math.floor(random.randint(0, self.width - 1))
+		randY = math.floor(random.randint(0, self.height - 1))
+		return Position(randX, randY)
 
 	def isPositionInRoom(self, pos):
 		"""
@@ -92,7 +87,9 @@ class RectangularRoom(object):
 		"""
 		posX = pos.getX()
 		posY = pos.getY()
-		return (posX < self.width) and (posX >= 0) and (posY >= 0) and (posY < self.height)
+		x_argument = (posX < self.width) and (posX >= 0)
+		y_argument = (posY >= 0) and (posY < self.height)
+		return x_argument and y_argument
 
 class Robot(object):
 	def __init__(self, room, speed):
@@ -122,19 +119,14 @@ class StandardRobot(Robot):
 	def updatePositionAndClean(self):
 		position = self.position.getNewPosition(self.angle, self.speed)
 
-		# If position not in room continue calculating until position in room
-		while not self.room.isPositionInRoom(position):
+		if self.room.isPositionInRoom(position):
+			self.position = position
+			self.room.cleanTileAtPosition(self.position)
+		else:
 			self.angle = random.randint(0, 360)
-			position = position.getNewPosition(self.angle, self.speed)
-		
-		self.position = position
-		self.room.cleanTileAtPosition(self.position)
 
-def runSimulation(num_robots, speed, width, height, min_coverage, num_trials, robot_type):
-	"""
-		In each trial, the objective is to determine how many time-steps are on 
-		average needed before a specified fraction of the room has been cleaned?
-	"""
+
+def runSimulation2(num_robots, speed, width, height, min_coverage, num_trials, robot_type):
 	all_simulations = []
 	for _ in range(num_trials):
 		counter = 0
@@ -150,24 +142,34 @@ def runSimulation(num_robots, speed, width, height, min_coverage, num_trials, ro
 	# anim.done()
 	return sum(all_simulations) / len(all_simulations)
 
+def runSimulation(num_robots, speed, width, height, min_coverage, num_trials, robot_type):
+	all_simulations = []
+	for _ in range(num_trials):
+		counter = 0
+		room = RectangularRoom(width, height)
+		robots = [robot_type(room, speed) for _ in range(num_robots)]
+		while room.getNumCleanedTiles()/room.getNumTiles() < min_coverage:
+			anim.update(room, robots)
+			for rbt in robots:
+				rbt.updatePositionAndClean()
+			counter += 1
+		all_simulations.append(counter)
+	anim.done()
+	return sum(all_simulations) / len(all_simulations)
+
 class RandomWalkRobot(Robot):
 
 	def updatePositionAndClean(self):
 		self.angle = random.randint(0, 360)
 		position = self.position.getNewPosition(self.angle, self.speed)
 
-		while not self.room.isPositionInRoom(position):
+		if self.room.isPositionInRoom(position):
+			self.position = position
+			self.room.cleanTileAtPosition(self.position)
+		else:
 			self.angle = random.randint(0, 360)
-			position = position.getNewPosition(self.angle, self.speed)
-
-		self.position = position
-		self.room.cleanTileAtPosition(self.position)
 
 def showPlot1(title, x_label, y_label):
-	"""
-	What information does the plot produced by this function tell you?
-	How many time-steps on average are needed to clean 0.8 percent of the room
-	"""
 	num_robot_range = range(1, 11)
 	times1 = []
 	times2 = []
@@ -185,12 +187,6 @@ def showPlot1(title, x_label, y_label):
 
 	
 def showPlot2(title, x_label, y_label):
-	"""
-	What information does the plot produced by this function tell you?
-	x - aspect ratio
-	y - step time for 2 robots, 80% of room
-	time it takes two robots to clean 80% of variously sized rooms
-	"""
 	aspect_ratios = []
 	times1 = []
 	times2 = []
@@ -209,19 +205,10 @@ def showPlot2(title, x_label, y_label):
 	pylab.show()
 
 if __name__ == '__main__':
-	num_robots = 3
-	speed = 1.0
-	width = 5
-	height = 5
-	percentCleaned = 0.7
-	trials = 1
-	delay = 0.6
 
-	# global anim
-	# anim = ps2_visualize.RobotVisualization(num_robots, width, height)
-	# anim = ps2_visualize.RobotVisualization(num_robots, width, height, delay)
-	# avg = runSimulation(num_robots, speed, width, height, percentCleaned, trials, StandardRobot)
-
+	anim = ps2_visualize.RobotVisualization(1, 10, 10)
+	print(runSimulation(5, 1.0, 10, 10, 0.8, 1, StandardRobot))
+	# print(runSimulation2(1, 1.0, 4, 4, 0.8, 1000, StandardRobot))
 
 # testRobotMovement(RandomWalkRobot, RectangularRoom)
 # testRobotMovement(StandardRobot, RectangularRoom)
