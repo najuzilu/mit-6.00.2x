@@ -846,3 +846,144 @@ pylab.errorbar(xVals, sizeMeans, yerr = 1.96*pylab.array(sizeSDs), fmt = 'o', la
 
 ### Standard Error ###
 
+Recall Central Limit Theorem:
+* Given a sufficiently large sample:
+	* The means of the samples in a set of samples (the sample means) will be appriximately normally distributed,
+	* This normal distribution will have a mean close to the mean of the population,
+	* The variance of the sample means will be close to the variance of the population divided by the sample size.
+* Time to use the 3rd feature
+* Compute standard error of the mean (SEM or SE)
+
+
+Standard error formula (standard deviation of population divided by square root of sampel size): 
+![Alt text](./SE.png)
+
+```python
+# Testing the SEM
+sampleSizes = (25, 50, 100, 200, 300, 400, 500, 600)
+numTrials = 50
+population = getHighs()
+popSD = numpy.std(population)
+sems = []
+sampleSDs = []
+
+for size in sampleSizes:
+	sems.append(sem(popSD, size))
+	means = []
+	for t in range(numTrials):
+		sample = random.sample(population, size)
+		means.append(sum(sample) / len(sample))
+	sampleSDs.append(numpy.std(means))
+pylab.plot(sampleSizes, sampleSDs, label = 'Std of 50 means')
+pylab.plot(sampleSizes, sems, 'r--', label = 'SEM')
+pylab.title('SEM vs. SD for 50 Means')
+pylab.legend()
+```
+
+**Given a single sample, how can we estimate the standard deviation of the population**?
+* Once sample reaches a reasonable size, sample standard deviation is pretty good approximation to population standard deviation.
+* So maybe use the standard deviation of the mean?
+* Try only for this example?
+	* does distribution of population matter? Yes, especially for skewed data
+	* does size of population also matter? No!
+
+**Three different distributions**:
+![Alt text](./threeDistributions.png)
+
+* Uniform distribution : `random.random()`
+* Gaussian distribution : `random.gauss(0, 1)`
+* Exponential distribution : `random.expovariate(0.5)` >>  lambda paramater which shows how steep the exponential is
+
+**Skew** is a measure of the asymmetry of probability distribution
+
+```python
+# code to generate distributions in pictures
+def plotDistributions():
+	uniform, normal, exp = [], [] , []
+	for i in range(100000):
+		uniform.append(random.random())
+		normal.append(random.gauss(0, 1))
+		exp.append(random.expovariate(0.5))
+	makeHist(uniform, 'Uniform', 'Value', 'Frequency')
+	pylab.figure()
+	makeHist(normal, 'Gaussian', 'Value', 'Frequency')
+	pylab.figure()
+	makeHist(exp, 'Exponential', 'Value', 'Frequency')
+
+plotDistributions()
+
+def compareDists():
+	uniform, normal, exp = [], [] , []
+	for i in range(100000):
+		uniform.append(random.random())
+		normal.append(random.gauss(0, 1))
+		exp.append(random.expovariate(0.5))
+	sampleSizes = (20, 600, 1)
+	udiffs = getDiffs(uniform, sampleSizes)
+	ndiffs = getDiffs(normal, sampleSizes)
+	ediffs = getDiffs(exponential, sampleSizes)
+	plotDiffs(sampleSizes, udiffs, 'Sample SD vs Population SD', 'Uniform population')
+	plotDiffs(sampleSizes, ndiffs, 'Sample SD vs Population SD', 'Normal population')
+	plotDiffs(sampleSizes, ediffs, 'Sample SD vs Population SD', 'Exponential population')
+
+compareDists()
+```
+
+**To estimate mean from a single sample**:
+* Choose sample size based on estimate of skew in population
+* Chose a random sample from the population
+* Compute the mean and standard deviation of that sample
+* Use the standard deviation of that sample to estimate the SE
+* Use the estimated SE to generate confidence intervals around the sample mean  
+_Works great when we choose independent random samples, which is not always so easy to do._
+
+### Independent Random Samples ###
+
+Are 200 samples enough?
+```python
+temps = getHighs()
+popMean = sum(temps) / len(temps)
+sampleSize = 200
+numTrials = 10000
+numBad = 0
+for t in range(numTrials):
+	sample = random.sample(temps, sampleSize)
+	sampleMean = sum(sample)/sampleSize
+	se = numpy.std(sample)/sampleSize**0.5
+	if abs(popMean - sampleMean) > 1.96*se:
+		numBad += 1
+print('Fraction outside 95% confidence interval =', numBad/numTrials)
+```
+
+* ALL theoretical results incorporate some assumptions
+* These must be checked before applying the theory!
+
+#### Exercise 4 ####
+Ace, Bree, and Chad are each tasked with finding the standard error for three different problems. Each person only has a sample size of 100 data points for each of their problem.
+
+Ace: the winning bonus number in the lottery
+Bree: the average women's shoe size
+Chad: the number of mold bacteria on bread over time
+
+1. Which person's sample standard deviation will be the closest to the actual population standard deviation?  
+**Answer**: Ace
+
+2. Which person's sample standard deviation will be the farthest to the actual population standard deviation?  
+**Answer**: Chad
+
+3. Now suppose Chad used a sample size of 10,000 instead of 100 but the other two people still use a sample size of 100. Mark all that are correct.  
+**Answer**: The difference between the sample standard deviation and actual population standard deviation for the mold problem decreases.
+
+#### Exercise 5 ####
+You are given two data files. Each file contains 1800 data points measuring the heart rate (in beats per minute, every 0.5 seconds) of a subject prforming comparable activities for the duration of 15 minutes: hr1.txt and hr2.txt. The data is plotted in the figures below. (note that the data is taken from the MIT-BIH Database)
+
+1. Using random.sample.  
+**Answer**:
+* Examples are independent in hr1 sample
+* Examples are independent in hr2 sample
+
+2. Getting a random number between 1 and 1800, 250 times.  
+**Answer**:
+
+3. Starting at the first example and going until the 500th example.  
+**Answer**: Neither h1 nor h2 give independent examples.
