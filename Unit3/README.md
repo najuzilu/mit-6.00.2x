@@ -1,6 +1,6 @@
-##Unit 3##
+## Unit 3 ##
 
-###Inferential Statistics###
+### Inferential Statistics ###
 * Population: a set of examples
 * Sample: a proper subset of a population
 * Goal: estimate some statcitic about the population based on statistics about the sample
@@ -95,7 +95,7 @@ playRoulette(game, numSpins)
 * So if you look at the average of the 20 spins, it will be closer to the expected mean of 50% reds than to the 100% you saw in the first 10 spins
 * First used by Francis Galton, 1885
 
-###Exercise 1###
+#### Exercise 1 # ####
 1. A fair two-sided coin is flipped 4 times. It comes up heads all four times. What is the probability that it comes up heads on the fifth flip? Answer in reduced fraction form - eg 1/5 instead of 2/10.   
 **Answer**: 1/2
 
@@ -106,7 +106,7 @@ playRoulette(game, numSpins)
 True or False? If we roll it four times, and it comes up red once and blue three times, then we have proved that the ball is biased.  
 **Answer**: False
 
-###Variation in Data###
+### Variation in Data ###
 
 ```python
 class EuRoulette(FairRulette):
@@ -204,7 +204,7 @@ for numSpins in (100, 1000, 10000, 100000):
 			'%,', '+/- ' + str(round(100*1.96*std, 3)) +
 			'% with 95% confidence')
 ```
-###Exercise 2###
+#### Exercise 2 ####
 For the questions below, please try to think about the solution in your head before using an IDE or a calculator to compute it. The goal of these questions is to give you some intuition about the topics we've been discussing.
 
 1. Which of the following populations has the largest variance?  
@@ -225,7 +225,7 @@ The sample from Population A has a mean of 35 and a standard deviation of 1. The
 5. The 95% confidence interval for a normal distribution of data with a mean of 5 and a standard deviation of 2 is 5 +/- ____? 
 **Answer**: (2 std * 1.96) = 3.92
 
-###Exercise 3###
+#### Exercise 3 ####
 Write a function, stdDevOfLengths(L) that takes in a list of strings, L, and outputs the standard deviation of the lengths of the strings. Return float('NaN') if L is empty.
 
 Recall that the standard deviation is computed by this equation:
@@ -258,7 +258,7 @@ def stdDevOfLengths(L):
 	return (std / len(L))**0.5
 ```
 
-###Exercise 4###
+#### Exercise 4 ####
 The coefficient of variation is the standard deviation divided by the mean. Loosely, it's a measure of how variable the population is in relation to the mean.
 
 1. Figure 1 shows the skyline of Pythonland, and Figure 2 shows the skyline of Montyland. Considering the heights of buildings in Pythonland and Montyland, which has a larger coefficient of variation?  
@@ -270,7 +270,7 @@ The coefficient of variation is the standard deviation divided by the mean. Loos
 3. Compute the coefficient of variation of [10, 4, 12, 15, 20, 5] to 3 decimal places.  
 **Answer**: sqrt((1 + (11-4)**2 + 1+ (11-15)**2 + (20-11)**2 + (11-5)**2) / 6) / 11 = 0.503
 
-###Distributions###
+### Distributions ###
 **Empirical Rule**:
 * ~ 68% of data within one standard deviation of mean
 * ~ 95% of data within 1.96 standard deviations of mean
@@ -314,7 +314,7 @@ pylab.hist(dist, 30)
 **Looks like the Empirical Rule holds**:
 ![Alt text](./empiricalRule.png)
 
-###SciPy Library###
+### SciPy Library ###
 * SciPy library contains many useful mathematical functions used by scientists and engineers
 * scipy.integrate.quad has up to four arguments
 	* a function or method to be integrated
@@ -350,7 +350,7 @@ def checkEmpirical(numTrials):
 
 **BUT** not all distributions are normal. For example, the outcomes of spins of roulette wheel are uniformally distributed (each outcome is equally probable).
 
-###Exercise 5###
+#### Exercise 5 ####
 In the lecture, you saw a uniform and a normal distribution. There is another type of distribution, called an exponential distribution. For the following real-life situations, fill in the blank with the appropriate distribution model (normal, uniform, or exponential) that would best simulate the situation.
 
 1. Rolling a fair 6-sided die  
@@ -377,7 +377,7 @@ In the lecture, you saw a uniform and a normal distribution. There is another ty
 8. Radioactive decay (time between successive atom decays)  
 **Answer**: exponential
 
-###Exercise 6###
+#### Exercise 6 ####
 1. Samples were taken from a distribution, and the histogram of those samples is shown here:... Which of the following distributions were the samples taken from?  
 **Answer**: normal
 
@@ -391,9 +391,9 @@ In the lecture, you saw a uniform and a normal distribution. There is another ty
 For each histogram, 1000 observations were made. The x-axis is measured in minutes, and the height of each bar at minute m corresponds to how many times there was an m minute wait until the next customer arrived.  
 **Answer**: Figure 1
 
-###Monte Carlo Simulations###
+### Monte Carlo Simulations ###
 
-###Central Limit Theorem###
+### Central Limit Theorem ###
 
 Why does the Empirical Rule work?
 * Because we are reasoning not about a single spin, but about the mean of a set of spins
@@ -472,7 +472,7 @@ pylab.title('Expected Return Betting a Pocket')
 * If we are trying to estimate the mean of a population using sufficiently large samples
 * The CLT allows us to use the empirical rule when computing confidence intervals
 
-###Exercise 1###
+#### Exercise 1 ####
 Suppose we have an experiment. We toss a coin  𝑚  times. Each time we collect results from a sample of size  𝑛  and compute this sample's mean  𝜇𝑖  and standard deviation  𝜎𝑖 . This experiment has an underlying distribution with mean  𝜇  and standard deviation  𝜎 .
 
 Which of the following does the Central Limit Theorem (CLT) guarantee (for large enough  𝑛  and  𝑚 ):  
@@ -481,7 +481,7 @@ Which of the following does the Central Limit Theorem (CLT) guarantee (for large
 * The sample means will have a mean close to the mean of the original distribution 𝜇
 * The sample means will hve a variance close to the variance of the original distribution divided by the sample size (𝜎)^2/n
 
-###Exercise 1-2###
+#### Exercise 1-2 ####
 We are handed a biased coin and want to infer the probability that it lands on heads. Use the code provided for CLT, along with the provided helper function flipCoin, to generate confidence intervals for the probability of heads. You should only need to change a few lines of code.
 
 You have two files: flipcoin.py with the code to fill in and with some code to plot the results, and coin_flips.txt with the flip data.
@@ -537,4 +537,312 @@ def clt():
         ## WHAT TO DO WITH THE SAMPLE MEANS?
 ```
 
-###Simulation to Find Pi###
+### Simulation to Find Pi ###
+
+**Monte Carlo simulation** was coined in 1946 by Stanislaw Ulam and Nicholas Metropolis in homage to games of chance played in casinos:
+> "The first thoughts and attempts I made to practice the Monte Carlo Method were suggested by a question, which occurred to me in 1946 as I was convalescing from an illness and playing solitaries. The question was, what are the chances that a Canfield solitaire laid out with 52 cards will come out successfully. After spending a lot of time trying to estimate them by pure combinatorial calculations I wondered whether a more practical method than abstract thinking might not be to lay it out, say 100 times, and simply observe and count the successful plays.... More generally how to change processes described by certain differential equations into an equivalent form interpretable as a succession of random operations."
+
+The roulette simulation was a classic Monte Carlo simulation. It was a method of estimating the value of an unknown quantity using inferential statistics:
+* Pupulation: a set of examples
+* Sample: a proper subset of a population
+* Key fact: a **random sample** tends to exhibit the same properties as the population from which it is drawn
+
+Monte Carlo simulation is useful for tackling problems in which predictive, non-determinism plays a role.
+Monte Carlo simulation and randomized algorithms in general, can be used to solve problems that have nothing inherently stochastic in them (for which there is no uncertainty about the outcome)
+
+![Alt text](./BuffonLaplace.png)
+![Alt text](./piCalculation.png)
+
+This analysis makes sense if:
+* Trials are random
+* Trials are independent
+
+#### Exercise 2 ####
+1. If you wanted to run a simulation that estimates the value of  √2  in a way similar to the Pi estimation shown in lecture, what geometric shape would you throw needles at?  
+**Answer**: A flat line ranging from 0 to root 2 and with a subsection that spancs from 0 to 1.
+
+2. What introduced the error for Archimedes' method of calculating Pi?  
+**Answer**: Not enough samples.
+
+### Monte Carlo Simulation ###
+
+Simulating Buffon-Laplace Method
+```python
+def throwNeedles(numNeedles):
+	inCircle = 0
+	for Needles in range(1, numNeedles + 1, 1):
+		x = random.random()
+		y = random.random()
+		if (x * x + y * y)**0.5 <= 1.0:
+			inCircle += 1
+	return 4 * (inCircle / float(numNeedles))
+
+def stdDev(est):
+	mean = sum(est) / float(len(est))
+	total = 0.0
+	for value in est:
+		total += (value - mean)**2
+	return (total / float(len(est)))**0.5
+
+def getEst(numNeedles, numTrials):
+	estimates = []
+	for  t in range(numTrials):
+		piGuess = throwNeedles(numNeedles)
+		estimates.append(piGuess)
+	sDev = stdDev(estimates)
+	curEst = sum(estimates) / len(estimates)
+	print('Est. = ' + str(curEst) + ', Std. dev. = ' + str(round(sDev, 6)) + ', Needles = ' + str(numNeedles))
+	return (curEst, sDev)
+
+def estPi(precision, numTrials):
+	numNeedles = 1000
+	sDev = precision
+	while sDev >= precision / 1.96: # (1.96)
+		curEst, sDev = getEst(numNeedles, numTrials)
+		numNeedles *= 2
+	return curEst
+```
+
+**Being Right is Not Good Enough**:
+* Not sufficient to produce a good answer
+* Need to have reason to believe that it is close to right
+* In this case, small standard deviation implies that we are close to the true value of pi.
+
+**Is it correct to state**:
+* 95% of the time we run this simulation, we will estimate that the value of pi is between 3.13... and 3.14... ?
+* With a probability of 0.95 the actual value of pi is between 3.13... and 3.14...?
+* Both are factually correct
+* **BUT** only one of these statement can be inferred from our simulation
+* _statistically valid != true_
+
+**Generally usefule technique**:
+* To estimate the area of some region, R
+	* Pick an envclosing region E, such that the area of E is easy to calculate and R lies completely within E
+	* Pick a set of random points that lie within E
+	* Let F be the fraction of the points that fall within R
+	* Multiply that area of E by F
+* Way to estimate integrals
+	* ![Alt text](./integral.png)
+
+#### Exercise 3 ####
+
+If you remember the Buffon Needle Problem, the ratio of the areas of a circle and a square are used to estimate the value of  𝜋  by dropping needles onto the shapes, like so: ![Alt text](./pi.png)  
+We can imagine that using different area ratios results in the estimation of different constants.
+
+In the following boxes, you will be asked to enter in mathematical expressions. To enter in addition, multiplication, subtraction, or division, use the operators: +, * , -, /. To enter in exponentiation, use the caret (^) key. To enter in the constant  𝜋 , simply type pi.
+
+1. What constant can you estimate using the following picture?  
+**Answer**: pi/ 2
+
+2. Download the code used in the lecture "Finding Pi". If we now want to estimate the constant from the picture above, what should the number '4' in the line: return 4 * (inCircle/float(numNeedles)) be changed to?  
+**Answer**: 2
+
+#### Exercise 4 ####
+You have a bucket with 3 red balls and 3 green balls. Assume that once you draw a ball out of the bucket, you don't replace it. What is the probability of drawing 3 balls of the same color?
+
+Write a Monte Carlo simulation to solve the above problem. Feel free to write a helper function if you wish.
+```python
+def noReplacementSimulation(numTrials):
+    '''
+    Runs numTrials trials of a Monte Carlo simulation
+    of drawing 3 balls out of a bucket containing
+    3 red and 3 green balls. Balls are not replaced once
+    drawn. Returns the a decimal - the fraction of times 3 
+    balls of the same color were drawn.
+    '''
+    def drawThreeConsequtiveBalls(balls = 6):
+		count = 0.0
+		arrayOfBalls = [_ for _ in range(balls)]
+		finalSelection = []
+
+		for i in range(3): # 3 consecutive picks
+			currentPick = random.choice(arrayOfBalls)
+			arrayOfBalls.remove(currentPick)
+			if currentPick <= 2:
+				finalSelection.append(1)
+			else:
+				finalSelection.append(0)
+		if sum(finalSelection) == 3 or sum(finalSelection) == 0:
+			count += 1
+		return count
+
+	totalCount = 0.0
+	count = 0.0
+	for t in range(numTrials):
+		totalCount += 1
+		count += drawThreeConsequtiveBalls()
+
+	return count / totalCount
+```
+
+### Sampling and Standard Error ###
+
+### Data Sampling ###
+
+**Inferential statistics**: making inferences about a population by examining one or more random samples drawn from that population.
+* With Monte Carlo simulation we can generate lots of random samples, and use them to compute confidence intervals
+* But suppose we can't create samples by simulation?
+	* "According to the most recent poll Clinton leads Trump by 3.7 percentenage points in swing states. The registered votes sample is 835 with a margin of error of plus or minus 4 percentage points."
+
+**Probability Sampling**:
+* Each member of the population has a nonzero probability of being included in a sample
+* Simple random sampling: each member has an equal chance of being chosen
+* Not always appropriate
+
+**Stratified Sampling** (e.g.: see picture below)
+* Partition population into subgroups
+* Take a simple random sample from each subgroup
+* Is used when:
+	* When there are small subgroups that should be represented
+	* When it is important that subgroups be represented proportionally to their size in the population
+	* Can be used to reduce the needed size of sample
+		* Variability of subgroups less than of entire population
+	* Requires care to do properly
+	* We'll stick to simple random sample
+![Alt text](./stratifiedSample.png)
+
+Predicting Outcome of an Election:
+* Approaches:
+	* Ask every voter
+	* Draw multiple random samples and compute mean and confidence interval
+	* Draw one sample and estimate mean weight and confidence interval using that
+
+
+**Predicting Temperatures**:
+* Data
+	* From US National Centers for Environmental Information (NCEI)
+	* Daily high and low temperatures for
+		* 21 different US cities
+		* 1961 - 2015
+		* 421, 848 points
+
+```python
+def makeHist(data, title, xlabel, ylabel, bins = 20):
+	pylab.hist(data, bins = bins)
+	pylab.title(title)
+	pylab.xlabel(xlabel)
+	pylab.ylabel(ylabel)
+
+def getHighs():
+	inFile = open('temperatures.csv')
+	population = []
+	for l in inFile:
+		try:
+			tempC = float(l.split(',')[1])
+			population.append(tempC)
+		except:
+			continue
+	return population
+
+def getMeansAndSDs(population, sample, verbose = False):
+	popMean = sum(population)/len(population)
+	sampleMean = sum(sample)/len(sample)
+	if verbose:
+		makeHist(population, 'Daily High 1961-2015 Population (mean = ' + str(rount(popMean, 2)) + ')', 'Degrees C', 'Number Days')
+		pylab.figure()
+		makeHist(sample, 'Daily High 1961-2015 Sample (mean = ' + str(rount(sampleMean, 2)) + ')', 'Degrees C', 'Number Days')
+		print('Population mean =', popMean)
+		print('Standard deviation of population =', numpy.std(population))
+		print('Sample mean =', sampleMean)
+		print('Standard deviation of sample =', numpy.std(sample))
+		return popMean, sampleMean, numpy.std(population), numpy.std(sample)
+
+# random.sample(population, sampleSize)  # returns a list containing sampleSize randomly chosen distint elements of population (sampling without replacement)
+
+random.seed(0)
+population = getHighs()
+sample = random.sample(population, 100)
+getMeansAndSDs(population, sample, True)
+```
+
+#### Exercise 1 ####
+
+1. For this situation, decide whether you should do randomized sampling or stratified sampling: You are traveling across the United States and recording the heights of 1000 people to find out the average height in the US.  
+**Answer**: Random sampling
+
+2. For this situation, decide whether you should do randomized sampling or stratified sampling: You live in a state that has 20,000 people in one big city and 100 people in a rural area. You and want to sample households in this state to determine how many electronic devices the average household has across all states.  
+**Answer**: Stratified sampling
+
+#### Exercise 4 ####
+You are given the following partially completed function and a file julytemps.txt containing the daily maximum and minimum temperatures for each day in Boston for the 31 days of July 2012. In the loop, we need to make sure we ignore all lines that don't contain the relevant data.
+```python
+def loadFile():
+    inFile = open('julytemps.txt')
+    high = []
+    low = []
+    for line in inFile:
+        fields = line.split()
+        # FILL THIS IN
+            continue
+        else:
+            high.append(int(fields[1]))
+            low.append(int(fields[2]))
+    return (low, high)
+```
+
+1. Be sure that you have looked through the raw data file and that you understand which lines do and do not contain relevant data. Which set of conditions would capture all non-data lines (ie, provide a filter that would catch anything that wasn't relevant data)? fields is the variable that contains a list of elements in a line.  
+**Answer**: `if len(fields) < 3 or not fields[0].isdigit()`
+
+2. Suppose you defined diffTemps = list(numpy.array(highTemps) - numpy.array(lowTemps)) to be a list which is the element-by-element difference between highTemps and lowTemps. Which is a valid plotting statement for a graph with days on the horizontal axis and the temperature difference on the vertical axis?  
+**Answer**: `pylab.plot(range(1, 32), diffTemps)`
+
+### Sample Size ###
+```python
+random.seed(0)
+population = getHighs()
+sampleSize = 100
+numSamples = 1000
+maxMeanDiff = 0
+maxSDDiff = 0
+sampleMeans = []
+
+for i in range(numSamples):
+	sample = random.sample(population, sampleSize)
+	popMean, sampleMean, popSD, sampleSD = getMeansAndSDs(population, sample, verbose = False)
+	sampleMeans.append(sampleMean)
+	if abs(popMean - sampleMean) > maxMeanDiff:
+		maxMeanDiff = abs(popMean - sampleMean)
+	if abs(popSD - sampleSD) > maxSDDiff:
+		maxSDDiff = abs(popSD - sampleSD)
+
+print('Mean of sample means = ', round(sum(sampleMeans)/len(sampleMeans), 3))
+print('Standard deviation of sample means = ', round(np.std(sampleMeans, 3))
+print('Max difference in means = ', round(maxMeanDiff, 3))
+print('Max difference in std = ', round(maxSDDiff, 3))
+
+makeHist(sampleMeans, 'Means of Samples', 'Mean', 'Frequency')
+pylab.axvline(x = popMean, color = 'r')
+```
+
+**Getting a tighter bound**:
+* Will drawing more samples help?
+	* Let's try to increase from 1000 to 2000
+* How about larger samples? **Yes!**
+
+**Error Bars, a Digression**:
+* Graphical representation of the variability of data
+* Way to visualize uncertainty
+* **When confidence intervals don't overlap, we can conclude that means are statistically significantly different at 95% level**
+* We can't conclude that they are not different in the case when they overlap
+
+```python
+pylab.errorbar(xVals, sizeMeans, yerr = 1.96*pylab.array(sizeSDs), fmt = 'o', label = '95% Confidence Interval')
+```
+
+**Bigger seems to be better**:
+* Going from a sample size of 100 to 400 reduces the confidence interval from 1.8C to about 1C.
+* The real question is not what can we conclude by looking at lots of samples, but what can we conclude from looking at one reasonably small sample?
+
+#### Exercise 3 ####
+
+1. The following image shows the average low and average high temperature in from the data in julytemps.txt. The errorbars represent the 95% confidence interval. The 95% confidence interval for the average high is 83.5 +/- 12.9 and the 95% confidence interval for the average low is 67.2 +/- 7.3. Are these two means statistically significant at the 95% confidence interval?  
+**Answer**: No
+
+2. Are these two means statistically significant at the 99.7% confidence interval?  
+**Answer**: No
+
+3. Are these two means statistically significant at the 68% confidence interval?
+**Answer**: Yes
+
+### Standard Error ###
+
