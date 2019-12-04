@@ -95,7 +95,7 @@ playRoulette(game, numSpins)
 * So if you look at the average of the 20 spins, it will be closer to the expected mean of 50% reds than to the 100% you saw in the first 10 spins
 * First used by Francis Galton, 1885
 
-####Exercise 1####
+###Exercise 1###
 1. A fair two-sided coin is flipped 4 times. It comes up heads all four times. What is the probability that it comes up heads on the fifth flip? Answer in reduced fraction form - eg 1/5 instead of 2/10.   
 **Answer**: 1/2
 
@@ -204,7 +204,7 @@ for numSpins in (100, 1000, 10000, 100000):
 			'%,', '+/- ' + str(round(100*1.96*std, 3)) +
 			'% with 95% confidence')
 ```
-####Exercise 2####
+###Exercise 2###
 For the questions below, please try to think about the solution in your head before using an IDE or a calculator to compute it. The goal of these questions is to give you some intuition about the topics we've been discussing.
 
 1. Which of the following populations has the largest variance?  
@@ -225,7 +225,7 @@ The sample from Population A has a mean of 35 and a standard deviation of 1. The
 5. The 95% confidence interval for a normal distribution of data with a mean of 5 and a standard deviation of 2 is 5 +/- ____? 
 **Answer**: (2 std * 1.96) = 3.92
 
-####Exercise 3####
+###Exercise 3###
 Write a function, stdDevOfLengths(L) that takes in a list of strings, L, and outputs the standard deviation of the lengths of the strings. Return float('NaN') if L is empty.
 
 Recall that the standard deviation is computed by this equation:
@@ -258,7 +258,7 @@ def stdDevOfLengths(L):
 	return (std / len(L))**0.5
 ```
 
-####Exercise 4####
+###Exercise 4###
 The coefficient of variation is the standard deviation divided by the mean. Loosely, it's a measure of how variable the population is in relation to the mean.
 
 1. Figure 1 shows the skyline of Pythonland, and Figure 2 shows the skyline of Montyland. Considering the heights of buildings in Pythonland and Montyland, which has a larger coefficient of variation?  
@@ -314,7 +314,7 @@ pylab.hist(dist, 30)
 **Looks like the Empirical Rule holds**:
 ![Alt text](./empiricalRule.png)
 
-#### SciPy Library ####
+###SciPy Library###
 * SciPy library contains many useful mathematical functions used by scientists and engineers
 * scipy.integrate.quad has up to four arguments
 	* a function or method to be integrated
@@ -350,7 +350,7 @@ def checkEmpirical(numTrials):
 
 **BUT** not all distributions are normal. For example, the outcomes of spins of roulette wheel are uniformally distributed (each outcome is equally probable).
 
-####Exercise 5####
+###Exercise 5###
 In the lecture, you saw a uniform and a normal distribution. There is another type of distribution, called an exponential distribution. For the following real-life situations, fill in the blank with the appropriate distribution model (normal, uniform, or exponential) that would best simulate the situation.
 
 1. Rolling a fair 6-sided die  
@@ -377,7 +377,7 @@ In the lecture, you saw a uniform and a normal distribution. There is another ty
 8. Radioactive decay (time between successive atom decays)  
 **Answer**: exponential
 
-####Exercise 6####
+###Exercise 6###
 1. Samples were taken from a distribution, and the histogram of those samples is shown here:... Which of the following distributions were the samples taken from?  
 **Answer**: normal
 
@@ -390,3 +390,151 @@ In the lecture, you saw a uniform and a normal distribution. There is another ty
 4. Mary's Clothes Shoppe is a moderately busy store. Which of the following histograms best matches observations of how much time (in minutes) there is between customer arrivals? That is, which histogram helps best predict how much time until the next customer comes into the Clothes Shoppe.
 For each histogram, 1000 observations were made. The x-axis is measured in minutes, and the height of each bar at minute m corresponds to how many times there was an m minute wait until the next customer arrived.  
 **Answer**: Figure 1
+
+###Monte Carlo Simulations###
+
+###Central Limit Theorem###
+
+Why does the Empirical Rule work?
+* Because we are reasoning not about a single spin, but about the mean of a set of spins
+* And the central limit theorem applies
+![Alt text](./whyEmpiricalRuleWorks.png)
+
+The Central Limit Theorem:
+* Given a sufficiently large sample:
+	* The means of the samples in a set of samples (the sample means) will be appriximately normally distributed,
+	* This normal distribution will have a mean close to the mean of the population,
+	* The variance of the sample means will be close to the variance of the population divided by the sample size.
+
+```python
+# Checking CLT
+import random
+def plotMeans(numDice, numRolls, numBins, legend, color, style):
+	means = []
+	for i in range(numRolls // numDice):
+		vals = 0
+		for j in range(numDice):
+			vals += 5 * random.random()
+		means.append(vals/float(numDice))
+	pylab.hist(means, numBins, color = color, label = legend.
+		weights = pylab.array(len(means)*[1]) / len(means),
+		hatch = style)
+	return getmeanAndStd(means)
+
+mean, std = plotMeans(1, 100000, 19, '1 die', 'b', '*')
+print('Mean of rolling 1 die =', str(mean) + ',', 'Std =', std)
+mean, std = plotMeans(50, 100000, 19, 'Mean of 50 dice', 'r', '//')
+pylab.title('Rolling Continuous Dice')
+pylab.xlabel('Value')
+pylab.ylabel('Probability')
+pylab.legend()
+```
+
+Simpler example:
+```python
+# 80% of the elemnts are 1, 20% are 2
+def getMeanAndStd(X):
+	mean = sum(X) / float(len(X))
+	tot = 0.0
+	for x in X:
+		tot += (x - mean)**2
+	std = (tot/len(X))**0.5
+	return mean, std
+
+L = [1, 1, 1, 1, 2]
+pylab.hist(L)
+factor = pylab.array(len(L) * [1]) / len(L)
+print(factor)
+pylab.figure()
+pylab.hist(L, weights = factor)
+```
+
+Try it for Roulette:
+```python
+numTrials = 50000
+numSpins = 200
+game = FairRulette()
+
+means = []
+
+for i in range(numTrials):
+	means.append(findPocketReturn(game, 1, numSpins)[0]/numSpins)
+
+pylab.hist(means, bins = 19,
+		weights = pylab.array(len(means) * [1]) / len(means))
+pylab.xlabel('mean Return')
+pylab.ylabel('Probability')
+pylab.title('Expected Return Betting a Pocket')
+```
+
+**Moral:**
+* It doesn't matter what the shape of the distribution of values happens to be
+* If we are trying to estimate the mean of a population using sufficiently large samples
+* The CLT allows us to use the empirical rule when computing confidence intervals
+
+###Exercise 1###
+Suppose we have an experiment. We toss a coin  𝑚  times. Each time we collect results from a sample of size  𝑛  and compute this sample's mean  𝜇𝑖  and standard deviation  𝜎𝑖 . This experiment has an underlying distribution with mean  𝜇  and standard deviation  𝜎 .
+
+Which of the following does the Central Limit Theorem (CLT) guarantee (for large enough  𝑛  and  𝑚 ):  
+**Answer**:
+* The sample means will be approximately normally distibuted
+* The sample means will have a mean close to the mean of the original distribution 𝜇
+* The sample means will hve a variance close to the variance of the original distribution divided by the sample size (𝜎)^2/n
+
+###Exercise 1-2###
+We are handed a biased coin and want to infer the probability that it lands on heads. Use the code provided for CLT, along with the provided helper function flipCoin, to generate confidence intervals for the probability of heads. You should only need to change a few lines of code.
+
+You have two files: flipcoin.py with the code to fill in and with some code to plot the results, and coin_flips.txt with the flip data.
+
+```python
+####################
+## Helper functions#
+####################
+def flipCoin(numFlips):
+    '''
+    Returns the result of numFlips coin flips of a biased coin.
+
+    numFlips (int): the number of times to flip the coin.
+
+    returns: a list of length numFlips, where values are either 1 or 0,
+    with 1 indicating Heads and 0 indicating Tails.
+    '''
+    with open('coin_flips.txt','r') as f:
+        all_flips = f.read()
+    flips = random.sample(all_flips, numFlips)
+    return [int(flip == 'H') for flip in flips]
+
+
+def getMeanAndStd(X):
+    mean = sum(X)/float(len(X))
+    tot = 0.0
+    for x in X:
+        tot += (x - mean)**2
+    std = (tot/len(X))**0.5
+    return mean, std
+
+    
+#############################
+## CLT Hands-on             #
+##                          #
+## Fill in the missing code #
+## Do not use numpy/pylab   #
+#############################
+meanOfMeans, stdOfMeans = [], []
+sampleSizes = range(10, 500, 50)
+
+def clt():
+    """ Flips a coin to generate a sample. 
+        Modifies meanOfMeans and stdOfMeans defined before the function
+        to get the means and stddevs based on the sample means. 
+        Does not return anything """
+    for sampleSize in sampleSizes:
+        sampleMeans = []
+        for t in range(20):
+            sample =
+            sampleMeans.append(getMeanAndStd(sample)[0])
+        ## FILL IN TWO LINES
+        ## WHAT TO DO WITH THE SAMPLE MEANS?
+```
+
+###Simulation to Find Pi###
