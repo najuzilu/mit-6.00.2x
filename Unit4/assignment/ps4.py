@@ -174,8 +174,15 @@ def evaluate_models_on_training(x, y, models):
     Returns:
         None
     """
-    # TODO
-    pass
+    rSquared = []
+    pylab.plot(x, y, 'o')
+    for model in models:
+        a, b = model[0], model[1]
+        estYVals = a * pylab.array(x) + b
+        pylab.plot(x, estYVals, 'r', label = 'Linear fit, k =' + str(round(1/a, 5)))
+        rSquared.append(r_squared(y, estYVals))
+    pylab.show()
+    print(rSquared)
 
 
 ### Begining of program
@@ -190,23 +197,11 @@ raw_data = Climate('data.csv')
 # evaluate_models_on_training(x, y, models)
 
 
-# # Problem 4: FILL IN MISSING CODE TO GENERATE y VALUES
-# x1 = INTERVAL_1
-# x2 = INTERVAL_2
-# y = []
-# # MISSING LINES
-# models = generate_models(x, y, [1])    
-# evaluate_models_on_training(x, y, models)
-
-
-
-# x = [1961, 1962, 1963]
-# y = [4.4,5.5,6.6]
-# degrees = [1, 2]
-# models = generate_models(x, y, degrees)
-# for i in range(len(models)):
-#     estYVals = pylab.polyval(models[i], x)
-#     error =  r_squared(y, estYVals)
-#     print(error)
-
-r_squared([32.0, 42.0, 31.3, 22.0, 33.0], [32.3, 42.1, 31.2, 22.1, 34.0])
+# Problem 4: FILL IN MISSING CODE TO GENERATE y VALUES
+x1 = INTERVAL_1
+x2 = INTERVAL_2
+y = []
+for year in INTERVAL_1:
+    y.append(np.mean(raw_data.get_yearly_temp('BOSTON', year)))
+models = generate_models(x1, y, [1])    
+evaluate_models_on_training(x1, y, models)
