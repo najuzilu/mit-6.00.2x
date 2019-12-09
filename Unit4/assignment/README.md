@@ -1,0 +1,28 @@
+## Pset 5 ##
+
+In this problem set, you will use regression analysis to model the climate of different areas and try to find evidence of global warming. You will create models to analyze and visualize climate change in terms of temperature. 
+
+Download ps4.zip.
+
+Please do not rename the files we provide you with, change any of the provided helper functions, change function/method names, or delete provided docstrings. You will need to keep data.csv in the same folder as ps4.py.
+
+To model the change in climate of an area, you will need some data. For this problem set, we will use temperature data obtained from the National Centers for Environmental Information (NCEI). The data, stored in data.csv , contains the average temperatures observed in 21 U.S. cities from 1961 to 2015. Open the file, and take a look at the raw data.
+
+In order to parse the raw data, in ps4.py w e have implemented a helper class Climate. You can initialize an instance of the Climate class by providing the filename of the raw data. Look over this class and read its docstrings to figure out how to get data for the following problems.
+
+### Problem 1: Curve Fitting ###
+
+Implement the generate_models function.
+* x and y are two lists corresponding to the x-coordinates and y-coordinates of the data samples (or data points); for example, if you have N data points, x = [x1 , x2 , ..., xN ] and y = [y1 , y2 , ..., yN ], where x_i and y_i are the x and y coordinate of the i-th data points. In this problem set, each x coordinate is an integer and corresponds to the year of a sample (e.g., 1997); each corresponding y coordinate is a float and represents the temperature observation (will be computed in multiple ways) of that year in Celsius. This representation will be used throughout the entire problem set.
+* degs is a list of integers indicating the degree of each regression model that we want to create. For each model, this function should fit the data (x,y) to a polynomial curve of that degree.
+* This function should return a list of models. A model is the numpy 1d array of the coefficients of the fitting polynomial curve. Each returned model should be in the same order as their corresponding integer in degs.
+
+### Problem 2: R^2###
+After we create some regression models, we also want to be able to evaluate our models to figure out how well each model represents our data, and tell good models from poorly fitting ones. One way to evaluate how well the model describes the data is computing the model's R^2 value. R^2 provides a measure of how well the total variation of samples is explained by the model.
+
+Implement the function r_squared. This function will take in:
+
+* list, y, that represents the y-coordinates of the original data samples
+* estimated, which is a corresponding list of y-coordinates estimated from the regression model
+
+This function should return the computed R^2 value. You can compute R^2 as follows, where  𝑒𝑖  is the estimated y value for the i-th data point (i.e. predicted by the regression),  𝑦𝑖  is the y value for the ith data point, and  𝑚𝑒𝑎𝑛  is the mean of the original data samples.

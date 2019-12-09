@@ -130,8 +130,11 @@ def generate_models(x, y, degs):
         a list of numpy arrays, where each array is a 1-d array of coefficients
         that minimizes the squared error of the fitting polynomial
     """
-    # TODO
-    pass
+    models = []
+    for d in degs:
+        model = np.polyfit(x, y, d)
+        models.append(model)
+    return models
 
 # Problem 2
 def r_squared(y, estimated):
@@ -143,8 +146,11 @@ def r_squared(y, estimated):
     Returns:
         a float for the R-squared error term
     """
-    # TODO
-    pass
+    y = np.array(y)
+    estimated = np.array(estimated)
+    error = ((estimated - y)**2).sum()
+    meanError = error/len(y)
+    return 1 - (meanError/np.var(y))
 
 # Problem 3
 def evaluate_models_on_training(x, y, models):
@@ -175,19 +181,32 @@ def evaluate_models_on_training(x, y, models):
 ### Begining of program
 raw_data = Climate('data.csv')
 
-# Problem 3
-y = []
-x = INTERVAL_1
-for year in INTERVAL_1:
-    y.append(raw_data.get_daily_temp('BOSTON', 1, 10, year))
-models = generate_models(x, y, [1])
-evaluate_models_on_training(x, y, models)
+# # Problem 3
+# y = []
+# x = INTERVAL_1
+# for year in INTERVAL_1:
+#     y.append(raw_data.get_daily_temp('BOSTON', 1, 10, year))
+# models = generate_models(x, y, [1])
+# evaluate_models_on_training(x, y, models)
 
 
-# Problem 4: FILL IN MISSING CODE TO GENERATE y VALUES
-x1 = INTERVAL_1
-x2 = INTERVAL_2
-y = []
-# MISSING LINES
-models = generate_models(x, y, [1])    
-evaluate_models_on_training(x, y, models)
+# # Problem 4: FILL IN MISSING CODE TO GENERATE y VALUES
+# x1 = INTERVAL_1
+# x2 = INTERVAL_2
+# y = []
+# # MISSING LINES
+# models = generate_models(x, y, [1])    
+# evaluate_models_on_training(x, y, models)
+
+
+
+# x = [1961, 1962, 1963]
+# y = [4.4,5.5,6.6]
+# degrees = [1, 2]
+# models = generate_models(x, y, degrees)
+# for i in range(len(models)):
+#     estYVals = pylab.polyval(models[i], x)
+#     error =  r_squared(y, estYVals)
+#     print(error)
+
+r_squared([32.0, 42.0, 31.3, 22.0, 33.0], [32.3, 42.1, 31.2, 22.1, 34.0])
