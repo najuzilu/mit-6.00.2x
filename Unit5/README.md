@@ -180,3 +180,93 @@ For each of the following situations state whether it would be a good idea to sc
 **Answer**: Don't scale
 
 ### Clustering ###
+* Partition examples into groups (clusters) such that examples in a group are more similar to each other than to examples in other groups
+* Unlike classification, there is no typically a "right answer"
+	* Answer dictated by feature vector and distance metric, not by a ground truth label
+
+Optimization problem:
+![Alt text](./optimizationProblem.png)
+* Why not divide variability by size of cluster?
+	* Want an objective function that penalizes big incoherent clusters more than it penalizes small incoherent clusters. Big and bad worse than small and bad
+* Is optimization problem finding a C that minimizes dissimilarity(C)?
+	* No, otherwise could put each example in its own cluster
+* Need a constraint, e.g.,
+	* Minimum distance between clusters
+	* Number of clusters
+
+K-means clustering:
+* Constraint: exactly k non-empty clusters
+* Use a greedy algorithm to find an approximation to minimizing objective function
+
+```
+# Algorithm
+randomly chose k examples as initial centroids  		# centroid, geographical center of that cluster
+while true:
+	create k clusters by assigning each example to closest centroid
+	compute k new centroids by averaging examples in each cluster
+	if centroids don't change:
+		break
+```
+
+Mitigating dependence on initial centroids:
+```
+best = kMeans(points)
+for t in range(numTrials):
+	C = kMeans(points)
+	if dissimilarity(C) < dissimilarity(best):
+		best = C
+return best
+```
+
+Wrapping up machine learning:
+* Use data to build statistical models that can be used to
+	* Shed light on system that produced data
+	* Make predictions about unseen data
+* Supervised learning
+* Unsupervised learning
+* Feature engineering
+* Goal was to expose you to some important ideas
+	* Not to get you to the point where you could apply them
+	* Much ore detail, including implementations, in text
+
+#### Exercise 4 ####
+
+The company Internet Movies, Inc. has found wide success in their streaming movie business. After many long and successful years of delivering content, they have decided to use machine learning to make their business even more successful. Luckily, they already possess a huge dataset that has grown over years and years of user activity – but they need your help to make sense of it! Answer the following questions
+
+1. Let’s start with a simple case. Assume user Alice is a particularly good member and she makes sure to rate every movie she ever watches on the website. What machine learning approach would be better for the company to use for determining whether she would be interested in a new specific movie?  
+**Answer**: Supervised
+
+2. Bob, on the other hand, is not that much into ratings. He does watch a lot of movies, but never takes the time to rate them. For users like Bob, which of the following data can the company use to determine potential interest in a specific movie? Check all that apply.  
+**Answer**:
+* Metadata of movies: actors, director, genre, etc.
+* Popularity of the movie amongst other users
+
+3. What machine learning approach should the company use for cases like Bob?  
+**Answer**: Unsupervised
+
+Now that the company has some idea about how to use the data, it’s time to design a classifier. Our classifier will be very simple: given a movie and a user, it will classify the movie as either "Good" or "Bad" for this user.
+
+4. Assume all the users of the company have a very simple rule in their movie taste: they like it if Tom Cruise has the lead role. Any other data is mostly irrelevant. However, no one in the company knows about this fact. Which of the following clustering models might be able to detect this rule? Check all that apply.  
+**Answer**: 
+* Unsupervised, with data: Lead role, movie length, rating
+* Supervised (label: rating), with data: Movie length, lead role, director 
+
+5. Looking at the options they’re given, the board members choose to go with a supervised model with lead role as data. You become outraged. "How can you not include movie length? It’s incredibly important! Who watches a 3 hour long movie --" Your fellow data scientist interrupts you. "Yeah, I agree, but look at these initial results. You see, if we remove movie length, ..." What can your colleague (correctly) say to convince you? Check all that apply.  
+**Answer**: 
+* "we can reduce intra-cluster dissimilarity."
+* "we can consume less memory, and the results look almost the same."
+
+#### Exercise 5 ####
+
+As Professor Guttag said, there are two types of people in this world: those who know programming and those who don’t. To prove this once and for all, you take a random sampling of edX students and put them through a programming test. Assume that the test is entirely fair and that it reflects the exact level of skill each student has. You also ask them to fill out a small questionnaire about their experience with 6.00.2x.
+
+You receive the results for each student as [Exam grade, Hour spent on 6.00.2x]. That is, if Alice has spent 90 hours on 6.00.2x and received a score of 74 on the exam, you will have [74, 90] as a data point.
+
+1. Based on your initial purposes, what should you choose as k?  
+**Answer**: 2
+
+2. Should you apply scaling to this data?  
+**Answer**: yes
+
+3. You don’t know what to believe (and, indeed, there’s no reason for you to choose one over another). What can you do to fix this and get a stable result?  
+**Answer**: Let k = 3
